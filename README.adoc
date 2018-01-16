@@ -12,10 +12,4 @@ capture events from Vert.x in order to gather metrics.
 
 Reporter implementations are in the _reporters_ sub-project
 
-For each of them please see the in-source Asciidoc documentation or the main documentation on the web-site for a full description
-of this component:
-
-=== InfluxDB
-
-* link:http://vertx.io/docs/vertx-monitoring-influxdb/[web-site docs]
-* link:reporters/influxdb/src/main/asciidoc[in-source docs]
+* link:reporters/influxdb/README.adoc[InfluxDB]

@@ -26,13 +26,13 @@ import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.ext.monitoring.influxdb.AuthenticationOptions;
-import io.vertx.ext.monitoring.influxdb.VertxInfluxDbOptions;
 import io.vertx.ext.monitoring.collector.impl.AvailabilityPoint;
 import io.vertx.ext.monitoring.collector.impl.CounterPoint;
 import io.vertx.ext.monitoring.collector.impl.DataPoint;
 import io.vertx.ext.monitoring.collector.impl.GaugePoint;
 import io.vertx.ext.monitoring.collector.impl.HttpReporterBase;
+import io.vertx.ext.monitoring.influxdb.AuthenticationOptions;
+import io.vertx.ext.monitoring.influxdb.VertxInfluxDbOptions;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
 
 public class InfluxDbReporter extends HttpReporterBase<VertxInfluxDbOptions> {
   private static final Logger LOG = LoggerFactory.getLogger(InfluxDbReporter.class);
@@ -49,7 +49,7 @@ public class InfluxDbReporter extends HttpReporterBase<VertxInfluxDbOptions> {
   private static final CharSequence MEDIA_TYPE_TEXT_PLAIN = HttpHeaders.createOptimized("text/plain");
 
   private final String metricsDataUri;
-  private final String prefix;
+  private final String measurement;
 
   private final CharSequence auth;
 
@@ -58,11 +58,11 @@ public class InfluxDbReporter extends HttpReporterBase<VertxInfluxDbOptions> {
    * @param options Vertx InflxuDb options
    * @param context the metric collection and sending execution context
    */
-  public InfluxDbReporter(Vertx vertx, VertxInfluxDbOptions options, Context context) {
+  InfluxDbReporter(Vertx vertx, VertxInfluxDbOptions options, Context context) {
     super(vertx, options, context, options.getHttpHeaders());
 
     metricsDataUri = options.getMetricsServiceUri() + "?db=" + options.getDatabase();
-    prefix = options.getPrefix();
+    measurement = options.getMeasurement();
 
     AuthenticationOptions authenticationOptions = options.getAuthenticationOptions();
     if (authenticationOptions.isEnabled()) {
@@ -119,16 +119,16 @@ public class InfluxDbReporter extends HttpReporterBase<VertxInfluxDbOptions> {
 
     Map<? extends Class<? extends DataPoint>, Map<String, List<DataPoint>>> mixedData;
     mixedData = dataPoints.stream().collect(groupingBy(DataPoint::getClass, groupingBy(DataPoint::getName)));
-    addMixedData(batchPoints, "gauges", mixedData.get(GaugePoint.class));
-    addMixedData(batchPoints, "counters", mixedData.get(CounterPoint.class));
-    addMixedData(batchPoints, "availabilities", mixedData.get(AvailabilityPoint.class));
+    addMixedData(batchPoints, mixedData.get(GaugePoint.class));
+    addMixedData(batchPoints, mixedData.get(CounterPoint.class));
+    addMixedData(batchPoints, mixedData.get(AvailabilityPoint.class));
     if (batchPoints.getPoints().isEmpty()) {
       return Optional.empty();
     }
     return Optional.of(batchPoints);
   }
 
-  private void addMixedData(BatchPoints batchPoints, String type, Map<String, List<DataPoint>> data) {
+  private void addMixedData(BatchPoints batchPoints, Map<String, List<DataPoint>> data) {
     if (data == null || data.isEmpty()) {
       return;
     }
@@ -136,7 +136,7 @@ public class InfluxDbReporter extends HttpReporterBase<VertxInfluxDbOptions> {
   }
 
   private Point toPoint(DataPoint dataPoint) {
-    Point.Builder pointBuilder = Point.measurement(prefix)
+    Point.Builder pointBuilder = Point.measurement(measurement)
       .time(dataPoint.getTimestamp(), TimeUnit.MILLISECONDS);
     if (dataPoint instanceof CounterPoint) {
       pointBuilder.addField(dataPoint.getName(), ((CounterPoint) dataPoint).getValue());

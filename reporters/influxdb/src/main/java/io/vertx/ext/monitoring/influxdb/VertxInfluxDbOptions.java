@@ -30,38 +30,39 @@ public class VertxInfluxDbOptions extends BatchingReporterOptions {
   /**
    * The default InfluxDb server host = localhost.
    */
-  public static final String DEFAULT_HOST = "localhost";
+  private static final String DEFAULT_HOST = "localhost";
 
   /**
    * The default InfluxDb server port = 8086.
    */
-  public static final int DEFAULT_PORT = 8086;
+  private static final int DEFAULT_PORT = 8086;
 
   /**
    * The default InfluxDb Metrics service URI = /write.
    */
-  public static final String DEFAULT_METRICS_URI = "/write";
+  private static final String DEFAULT_METRICS_URI = "/write";
 
   /**
    * The default InfluxDb database = default.
    */
-  public static final String DEFAULT_DATABASE = "default";
+  private static final String DEFAULT_DATABASE = "default";
 
   /**
-   * The default prefix = vert.x.
+   * The default measurement = vert.x.
    */
-  public static final String DEFAULT_PREFIX = "vert.x";
+  private static final String DEFAULT_MEASUREMENT = "vert.x";
 
   /**
    * The default gzip enabled on InfluxDb.
    */
-  public static final boolean DEFAULT_GZIP_ENABLED = true;
+  private static final boolean DEFAULT_GZIP_ENABLED = true;
 
   private String host;
   private int port;
   private HttpClientOptions httpOptions;
   private String metricsServiceUri;
   private String database;
+  private String measurement;
   private AuthenticationOptions authenticationOptions;
   private JsonObject httpHeaders;
 
@@ -74,7 +75,7 @@ public class VertxInfluxDbOptions extends BatchingReporterOptions {
     httpOptions = new HttpClientOptions();
     metricsServiceUri = DEFAULT_METRICS_URI;
     database = DEFAULT_DATABASE;
-    setPrefix(DEFAULT_PREFIX);
+    measurement = DEFAULT_MEASUREMENT;
     authenticationOptions = new AuthenticationOptions();
     httpHeaders = new JsonObject();
   }
@@ -86,6 +87,7 @@ public class VertxInfluxDbOptions extends BatchingReporterOptions {
     httpOptions = other.httpOptions != null ? new HttpClientOptions(other.httpOptions) : new HttpClientOptions();
     metricsServiceUri = other.metricsServiceUri;
     database = other.database;
+    measurement = other.measurement;
     authenticationOptions = other.authenticationOptions != null ? new AuthenticationOptions(other.authenticationOptions) : new AuthenticationOptions();
     httpHeaders = other.httpHeaders;
   }
@@ -168,6 +170,21 @@ public class VertxInfluxDbOptions extends BatchingReporterOptions {
    */
   public VertxInfluxDbOptions setDatabase(String database) {
     this.database = database;
+    return this;
+  }
+
+  /**
+   * @return the InfluxDb measurement
+   */
+  public String getMeasurement() {
+    return measurement;
+  }
+
+  /**
+   * Set the InfluxDb measurement. Defaults to {@code vert.x}.
+   */
+  public VertxInfluxDbOptions setMeasurement(String measurement) {
+    this.measurement = measurement;
     return this;
   }
 
