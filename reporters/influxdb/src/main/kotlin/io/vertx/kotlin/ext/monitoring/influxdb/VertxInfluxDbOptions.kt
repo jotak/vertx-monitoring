@@ -20,6 +20,7 @@ import io.vertx.ext.monitoring.influxdb.AuthenticationOptions
  * @param host  Set the InfluxDb Metrics service host. Defaults to <code>localhost</code>.
  * @param httpHeaders  Set specific headers to include in HTTP requests.
  * @param httpOptions  Set the configuration of the InfluxDb Metrics HTTP client.
+ * @param measurement  Set the InfluxDb measurement. Defaults to <code>vert.x</code>.
  * @param metricsBridgeAddress 
  * @param metricsBridgeEnabled 
  * @param metricsServiceUri  Set the InfluxDb Metrics service URI. Defaults to <code>/InfluxDb/metrics</code>. This can be useful if you host the InfluxDb server behind a proxy and manipulate the default service URI.
@@ -41,6 +42,7 @@ fun VertxInfluxDbOptions(
   host: String? = null,
   httpHeaders: io.vertx.core.json.JsonObject? = null,
   httpOptions: io.vertx.core.http.HttpClientOptions? = null,
+  measurement: String? = null,
   metricsBridgeAddress: String? = null,
   metricsBridgeEnabled: Boolean? = null,
   metricsServiceUri: String? = null,
@@ -77,6 +79,9 @@ fun VertxInfluxDbOptions(
   }
   if (httpOptions != null) {
     this.setHttpOptions(httpOptions)
+  }
+  if (measurement != null) {
+    this.setMeasurement(measurement)
   }
   if (metricsBridgeAddress != null) {
     this.setMetricsBridgeAddress(metricsBridgeAddress)

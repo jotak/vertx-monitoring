@@ -31,6 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(VertxUnitRunner.class)
 public class InfluxDbReporterITest {
 
@@ -66,9 +68,13 @@ public class InfluxDbReporterITest {
         Buffer fullRequestBody = Buffer.buffer();
         req.handler(fullRequestBody::appendBuffer);
         req.endHandler(h -> {
-          context.assertTrue(fullRequestBody.toString().contains("eventbus.publishedRemoteMessages=0i"));
-          req.response().setStatusCode(200).end();
-          async.complete();
+          try {
+            context.verify(v -> assertThat(fullRequestBody.toString())
+              .contains("vert.x vertx.eventbus.publishedRemoteMessages=0i"));
+          } finally {
+            req.response().setStatusCode(200).end();
+            async.complete();
+          }
         });
       }).listen(8086, "localhost", context.asyncAssertSuccess());
     async.awaitSuccess();

@@ -29,8 +29,7 @@ public class AuthenticationOptions {
   /**
    * The default value to enable / disable authentication. Disabled by default.
    */
-  public static final boolean DEFAULT_ENABLED = false;
-
+  private static final boolean DEFAULT_ENABLED = false;
 
   private String username;
   private String secret;

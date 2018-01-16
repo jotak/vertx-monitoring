@@ -62,6 +62,9 @@ public class VertxInfluxDbOptionsConverter {
     if (json.getValue("httpOptions") instanceof JsonObject) {
       obj.setHttpOptions(new io.vertx.core.http.HttpClientOptions((JsonObject)json.getValue("httpOptions")));
     }
+    if (json.getValue("measurement") instanceof String) {
+      obj.setMeasurement((String)json.getValue("measurement"));
+    }
     if (json.getValue("metricsBridgeAddress") instanceof String) {
       obj.setMetricsBridgeAddress((String)json.getValue("metricsBridgeAddress"));
     }
@@ -103,6 +106,9 @@ public class VertxInfluxDbOptionsConverter {
     }
     if (obj.getHttpOptions() != null) {
       json.put("httpOptions", obj.getHttpOptions().toJson());
+    }
+    if (obj.getMeasurement() != null) {
+      json.put("measurement", obj.getMeasurement());
     }
     if (obj.getMetricsBridgeAddress() != null) {
       json.put("metricsBridgeAddress", obj.getMetricsBridgeAddress());

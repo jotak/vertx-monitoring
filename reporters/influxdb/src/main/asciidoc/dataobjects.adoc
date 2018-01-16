@@ -63,6 +63,10 @@ Set specific headers to include in HTTP requests.
 +++
 Set the configuration of the InfluxDb Metrics HTTP client.
 +++
+|[[measurement]]`measurement`|`String`|
++++
+Set the InfluxDb measurement. Defaults to <code>vert.x</code>.
++++
 |[[metricsBridgeAddress]]`metricsBridgeAddress`|`String`|-
 |[[metricsBridgeEnabled]]`metricsBridgeEnabled`|`Boolean`|-
 |[[metricsServiceUri]]`metricsServiceUri`|`String`|
