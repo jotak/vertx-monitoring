@@ -46,9 +46,9 @@
   </properties>
 
   <modules>
-    <module>monitoring-common</module>
-    <module>batching-collector</module>
-    <module>reporters</module>
+    <module>vertx-monitoring-common</module>
+    <module>vertx-monitoring-collector</module>
+    <module>vertx-monitoring-reporters</module>
   </modules>
 
   <dependencyManagement>
