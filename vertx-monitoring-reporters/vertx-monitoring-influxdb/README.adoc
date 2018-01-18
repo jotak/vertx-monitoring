@@ -1,7 +1,7 @@
-= Vert.x InfluxDB Metrics
+= Vert.x Monitoring for InfluxDB
 :source-language: java
 
-image::https://vertx.ci.cloudbees.com/buildStatus/icon?job=vert.x3-monitoring-influxdb[link=https://vertx.ci.cloudbees.com/job/vert.x3-monitoring-influxdb/]
+image::https://vertx.ci.cloudbees.com/buildStatus/icon?job=vert.x3-monitoring[link=https://vertx.ci.cloudbees.com/job/vert.x3-monitoring/]
 
 This module contains metrics collection and reporting to InfluxDB.
 

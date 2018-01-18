@@ -12,4 +12,5 @@ capture events from Vert.x in order to gather metrics.
 
 Reporter implementations are in the _reporters_ sub-project
 
-* link:reporters/influxdb/README.adoc[InfluxDB]
+* link:vertx-monitoring-reporters/vertx-monitoring-influxdb/README.adoc[InfluxDB]
+* link:vertx-monitoring-reporters/vertx-monitoring-prometheus/README.adoc[Prometheus]

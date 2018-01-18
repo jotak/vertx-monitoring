@@ -31,5 +31,6 @@
 
   <modules>
     <module>vertx-monitoring-influxdb</module>
+    <module>vertx-monitoring-prometheus</module>
   </modules>
 </project>
