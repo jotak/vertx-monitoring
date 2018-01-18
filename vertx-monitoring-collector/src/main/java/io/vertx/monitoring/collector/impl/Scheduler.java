@@ -16,9 +16,9 @@
 package io.vertx.monitoring.collector.impl;
 
 import io.vertx.core.Context;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.monitoring.collector.BatchingReporterOptions;
+import io.vertx.monitoring.collector.Reporter;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,7 +33,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class Scheduler {
   private final Vertx vertx;
-  private final Handler<List<DataPoint>> sender;
+  private final Reporter reporter;
   private final List<MetricSupplier> suppliers;
 
   private long timerId;
@@ -42,11 +42,11 @@ public class Scheduler {
    * @param vertx   the {@link Vertx} managed instance
    * @param options batching reporter options
    * @param context the metric collection and sending execution context
-   * @param sender  the object responsible for sending metrics to a remote server
+   * @param reporter  the reporter responsible for sending metrics to a remote server
    */
-  public Scheduler(Vertx vertx, BatchingReporterOptions options, Context context, Handler<List<DataPoint>> sender) {
+  public Scheduler(Vertx vertx, BatchingReporterOptions options, Context context, Reporter reporter) {
     this.vertx = vertx;
-    this.sender = sender;
+    this.reporter = reporter;
     suppliers = new CopyOnWriteArrayList<>();
     context.runOnContext(aVoid -> {
       timerId = vertx.setPeriodic(MILLISECONDS.convert(options.getSchedule(), SECONDS), this::collectAndSend);
@@ -57,7 +57,7 @@ public class Scheduler {
     suppliers.forEach(supplier -> {
       List<DataPoint> datapoints = supplier.collect();
       if (!datapoints.isEmpty()) {
-        sender.handle(datapoints);
+        reporter.handle(datapoints);
       }
     });
   }

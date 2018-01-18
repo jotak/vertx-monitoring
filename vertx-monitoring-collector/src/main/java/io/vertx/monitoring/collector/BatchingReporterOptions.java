@@ -31,22 +31,22 @@ public class BatchingReporterOptions extends MetricsOptionsBase {
   /**
    * The default metric name prefix (empty).
    */
-  private static final String DEFAULT_PREFIX = "";
+  public static final String DEFAULT_PREFIX = "";
 
   /**
    * Default value for metric collection interval (in seconds) = 1.
    */
-  private static final int DEFAULT_SCHEDULE = 1;
+  public static final int DEFAULT_SCHEDULE = 1;
 
   /**
    * Default value for the maximum number of metrics in a batch = 50.
    */
-  private static final int DEFAULT_BATCH_SIZE = 50;
+  public static final int DEFAULT_BATCH_SIZE = 50;
 
   /**
    * Default value for the maximum delay between two consecutive batches (in seconds) = 1.
    */
-  private static final int DEFAULT_BATCH_DELAY = 1;
+  public static final int DEFAULT_BATCH_DELAY = 1;
 
   private String prefix;
   private int schedule;

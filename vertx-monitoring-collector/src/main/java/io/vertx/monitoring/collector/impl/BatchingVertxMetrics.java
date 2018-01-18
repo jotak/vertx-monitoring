@@ -37,9 +37,9 @@ import io.vertx.core.spi.metrics.HttpClientMetrics;
 import io.vertx.core.spi.metrics.HttpServerMetrics;
 import io.vertx.core.spi.metrics.PoolMetrics;
 import io.vertx.core.spi.metrics.TCPMetrics;
-import io.vertx.monitoring.common.MetricsCategory;
 import io.vertx.monitoring.collector.BatchingReporterOptions;
 import io.vertx.monitoring.collector.Reporter;
+import io.vertx.monitoring.common.MetricsCategory;
 
 import java.util.Collections;
 import java.util.EnumMap;

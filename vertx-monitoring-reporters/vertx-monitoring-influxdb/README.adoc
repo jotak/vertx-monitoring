@@ -3,14 +3,14 @@
 
 image::https://vertx.ci.cloudbees.com/buildStatus/icon?job=vert.x3-monitoring-influxdb[link=https://vertx.ci.cloudbees.com/job/vert.x3-monitoring-influxdb/]
 
-This module contains metrics collection and reporting to InfluxDb.
+This module contains metrics collection and reporting to InfluxDB.
 
-http://www.influxdb.org[InfluxDb] is a time series database.
+http://www.influxdb.org[InfluxDB] is a time series database.
 
 The http://vertx.io/docs/vertx-core/java/index.html#_metrics_spi[Vert.x Metrics SPI] allows implementers to
 capture events from Vert.x in order to gather metrics.
 
-This project is an InfluxDb implementation of the Vert.x Metrics SPI: metrics built from Vert.x events will be sent to
+This project is an InfluxDB implementation of the Vert.x Metrics SPI: metrics built from Vert.x events will be sent to
 an InfluxDb Timeseries database.
 
 Please see the in-source Asciidoc documentation or the main documentation on the web-site for a full description
@@ -19,9 +19,16 @@ of this component:
 * link:http://vertx.io/docs/vertx-monitoring-influxdb/[web-site docs]
 * link:src/main/asciidoc[in-source docs]
 
-If you want to test you can use this docker command to run an InfluxDb instance:
+== Quick setup
 
+To use the InfluxDB reporter, you need first to get a running InfluxDB instance. Example with _docker_:
+
+```bash
 docker run --rm --name vertx-influxdb -p 8086:8086 -p 8083:8083 -e INFLUXDB_ADMIN_ENABLED=true influxdb
+```
 
-You can connect to the administration interface in your browser using http://localhost:8083.
-InfluxDB will listen for api requests on port 8086
+You can connect to the administration interface in your browser at `http://localhost:8083`.
+You need to create a database from this interface. By default, the reporter will use `default`, but you can change it
+through `VertxInfluxDbOptions#setDatabase`.
+
+InfluxDB will listen for api requests on port 8086 by default.

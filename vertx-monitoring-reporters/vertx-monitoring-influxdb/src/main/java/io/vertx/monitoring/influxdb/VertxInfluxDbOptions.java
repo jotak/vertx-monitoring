@@ -30,32 +30,32 @@ public class VertxInfluxDbOptions extends BatchingReporterOptions {
   /**
    * The default InfluxDb server host = localhost.
    */
-  private static final String DEFAULT_HOST = "localhost";
+  public static final String DEFAULT_HOST = "localhost";
 
   /**
    * The default InfluxDb server port = 8086.
    */
-  private static final int DEFAULT_PORT = 8086;
+  public static final int DEFAULT_PORT = 8086;
 
   /**
    * The default InfluxDb Metrics service URI = /write.
    */
-  private static final String DEFAULT_METRICS_URI = "/write";
+  public static final String DEFAULT_METRICS_URI = "/write";
 
   /**
    * The default InfluxDb database = default.
    */
-  private static final String DEFAULT_DATABASE = "default";
+  public static final String DEFAULT_DATABASE = "default";
 
   /**
    * The default measurement = vert.x.
    */
-  private static final String DEFAULT_MEASUREMENT = "vert.x";
+  public static final String DEFAULT_MEASUREMENT = "vert.x";
 
   /**
    * The default gzip enabled on InfluxDb.
    */
-  private static final boolean DEFAULT_GZIP_ENABLED = true;
+  public static final boolean DEFAULT_GZIP_ENABLED = true;
 
   private String host;
   private int port;
