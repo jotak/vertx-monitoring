@@ -59,7 +59,7 @@
  * {@link examples.MetricsExamples#setup()}
  * ----
  *
- * == Configuration
+ * == Configuration examples
  *
  * === Using an embedded HTTP server for exposing endpoints
  *
@@ -68,7 +68,7 @@
  * {@link examples.MetricsExamples#setupEmbeddedServerWithOptions()}
  * ----
  *
- * === Binding an existing Vert.x router
+ * === Binding to an existing Vert.x router
  *
  * [source,$lang]
  * ----

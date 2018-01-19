@@ -24,7 +24,7 @@
     <version>3.5.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>vertx-prometheus-metrics</artifactId>
+  <artifactId>vertx-monitoring-prometheus</artifactId>
 
   <name>Vert.x Prometheus Metrics</name>
   <description>Prometheus reporting for Vert.x Monitoring</description>

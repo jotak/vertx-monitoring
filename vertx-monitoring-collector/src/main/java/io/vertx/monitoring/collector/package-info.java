@@ -14,7 +14,7 @@
  * You may elect to redistribute this code under either of these licenses.
  */
 
-@ModuleGen(name = "vertx-monitoring-batching-collector", groupPackage = "io.vertx")
+@ModuleGen(name = "vertx-monitoring-collector", groupPackage = "io.vertx")
 package io.vertx.monitoring.collector;
 
 import io.vertx.codegen.annotations.ModuleGen;
