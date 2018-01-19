@@ -68,12 +68,22 @@
  * {@link examples.MetricsExamples#setupEmbeddedServerWithOptions()}
  * ----
  *
- * === Binding an existing Vert.X router
+ * === Binding an existing Vert.x router
  *
  * [source,$lang]
  * ----
  * {@link examples.MetricsExamples#setupBoundRouter()}
  * ----
+ *
+ * === Using a custom Prometheus registry
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.MetricsExamples#setupBoundRouterWithCustomRegistry()}
+ * ----
+ *
+ * In this case, Vert.x will create a new Prometheus registry instead of using the default one. This registry is then
+ * accessible using {@link io.vertx.monitoring.prometheus.impl.PrometheusRegistries#get(java.lang.String)}.
  *
  * Please refer to {@link io.vertx.monitoring.prometheus.VertxPrometheusOptions} for an exhaustive list of options.
  *

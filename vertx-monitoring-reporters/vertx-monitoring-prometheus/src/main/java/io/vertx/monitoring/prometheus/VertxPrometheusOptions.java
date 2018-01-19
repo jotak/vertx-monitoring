@@ -16,6 +16,7 @@
 package io.vertx.monitoring.prometheus;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.monitoring.common.MetricsOptionsBase;
 import io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics;
@@ -32,9 +33,9 @@ import io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics;
 public class VertxPrometheusOptions extends MetricsOptionsBase {
 
   /**
-   * By default, uses the standard prometheus registry.
+   * By default, uses the standard prometheus registry (name is null)
    */
-  public static final boolean DEFAULT_SEPARATE_REGISTRY = false;
+  public static final String DEFAULT_REGISTRY_NAME = null;
 
   /**
    * By default, enables <i>remote</i> label for net/http clients.
@@ -46,24 +47,32 @@ public class VertxPrometheusOptions extends MetricsOptionsBase {
    */
   public static final boolean DEFAULT_ENABLE_REMOTE_LABEL_FOR_SERVERS = false;
 
-  private VertxPrometheusServerOptions serverOptions;
-  private boolean separateRegistry;
+  /**
+   * The default metrics endpoint = /metrics when using an embedded server.
+   */
+  public static final String DEFAULT_EMBEDDED_SERVER_ENDPOINT = "/metrics";
+
+  private HttpServerOptions embeddedServerOptions;
+  private String registryName;
   private boolean enableRemoteLabelForClients;
   private boolean enableRemoteLabelForServers;
+  private String embeddedServerEndpoint;
 
   public VertxPrometheusOptions() {
-    separateRegistry = DEFAULT_SEPARATE_REGISTRY;
+    registryName = DEFAULT_REGISTRY_NAME;
     enableRemoteLabelForClients = DEFAULT_ENABLE_REMOTE_LABEL_FOR_CLIENTS;
     enableRemoteLabelForServers = DEFAULT_ENABLE_REMOTE_LABEL_FOR_SERVERS;
+    embeddedServerEndpoint = DEFAULT_EMBEDDED_SERVER_ENDPOINT;
   }
 
   public VertxPrometheusOptions(VertxPrometheusOptions other) {
     super(other);
-    separateRegistry = other.separateRegistry;
+    registryName = other.registryName;
     enableRemoteLabelForClients = other.enableRemoteLabelForClients;
     enableRemoteLabelForServers = other.enableRemoteLabelForServers;
-    if (other.serverOptions != null) {
-      serverOptions = new VertxPrometheusServerOptions(other.serverOptions);
+    embeddedServerEndpoint = other.embeddedServerEndpoint != null ? other.embeddedServerEndpoint : DEFAULT_EMBEDDED_SERVER_ENDPOINT;
+    if (other.embeddedServerOptions != null) {
+      embeddedServerOptions = new HttpServerOptions(other.embeddedServerOptions);
     }
   }
 
@@ -81,33 +90,33 @@ public class VertxPrometheusOptions extends MetricsOptionsBase {
     return this;
   }
 
+  public HttpServerOptions getEmbeddedServerOptions() {
+    return embeddedServerOptions;
+  }
+
   /**
    * An embedded server will start to expose metrics with Prometheus format
-   * @param serverOptions the server options
+   * @param embeddedServerOptions the server options
    */
-  public VertxPrometheusOptions embedServer(VertxPrometheusServerOptions serverOptions) {
-    this.serverOptions = serverOptions;
+  public VertxPrometheusOptions setEmbeddedServerOptions(HttpServerOptions embeddedServerOptions) {
+    this.embeddedServerOptions = embeddedServerOptions;
     return this;
   }
 
-  public VertxPrometheusServerOptions getServerOptions() {
-    return serverOptions;
+  public String getRegistryName() {
+    return registryName;
   }
 
-  public void setServerOptions(VertxPrometheusServerOptions serverOptions) {
-    this.serverOptions = serverOptions;
-  }
-
-  public void separateRegistry() {
-    this.separateRegistry = true;
-  }
-
-  public boolean isSeparateRegistry() {
-    return separateRegistry;
-  }
-
-  public void setSeparateRegistry(boolean separateRegistry) {
-    this.separateRegistry = separateRegistry;
+  /**
+   * Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
+   * To retrieve this registry later, call {@link io.vertx.monitoring.prometheus.impl.PrometheusRegistries#get(String)}
+   * Doing so allows to provide application-defined metrics to the same registry.
+   * If {@code registryName} is not provided (or null), Prometheus default registry will be used.
+   * @param registryName a name to uniquely identify this registry
+   */
+  public VertxPrometheusOptions setRegistryName(String registryName) {
+    this.registryName = registryName;
+    return this;
   }
 
   public boolean isEnableRemoteLabelForClients() {
@@ -120,8 +129,9 @@ public class VertxPrometheusOptions extends MetricsOptionsBase {
    * in order to reduce the number of related prometheus metrics created.<br/>
    * This option is set to <i>true</i> by default.
    */
-  public void setEnableRemoteLabelForClients(boolean enableRemoteLabelForClients) {
+  public VertxPrometheusOptions setEnableRemoteLabelForClients(boolean enableRemoteLabelForClients) {
     this.enableRemoteLabelForClients = enableRemoteLabelForClients;
+    return this;
   }
 
   public boolean isEnableRemoteLabelForServers() {
@@ -134,7 +144,21 @@ public class VertxPrometheusOptions extends MetricsOptionsBase {
    * in order to reduce the number of related prometheus metrics created.<br/>
    * This option is set to <i>false</i> by default.
    */
-  public void setEnableRemoteLabelForServers(boolean enableRemoteLabelForServers) {
+  public VertxPrometheusOptions setEnableRemoteLabelForServers(boolean enableRemoteLabelForServers) {
     this.enableRemoteLabelForServers = enableRemoteLabelForServers;
+    return this;
+  }
+
+  /**
+   * Set metrics endpoint. Use conjointly with {@link #setEmbeddedServerOptions(HttpServerOptions)}
+   * @param embeddedServerEndpoint metrics endpoint
+   */
+  public VertxPrometheusOptions setEmbeddedServerEndpoint(String embeddedServerEndpoint) {
+    this.embeddedServerEndpoint = embeddedServerEndpoint;
+    return this;
+  }
+
+  public String getEmbeddedServerEndpoint() {
+    return embeddedServerEndpoint;
   }
 }

@@ -54,10 +54,20 @@ vertx = Vertx::Vertx.vertx({
 
 [source,ruby]
 ----
-Code not translatable
+require 'vertx/vertx'
+vertx = Vertx::Vertx.vertx({
+  'metricsOptions' => {
+    'enabled' => true,
+    'embeddedServerOptions' => {
+      'port' => 8080
+    },
+    'embeddedServerEndpoint' => "/metrics/vertx"
+  }
+})
+
 ----
 
-=== Binding an existing Vert.X router
+=== Binding an existing Vert.x router
 
 [source,ruby]
 ----
@@ -74,6 +84,28 @@ router = VertxWeb::Router.router(vertx)
 router.route("/custom").handler(&Java::IoVertxMonitoringPrometheusImpl::PrometheusVertxMetrics.create_metrics_handler())
 
 ----
+
+=== Using a custom Prometheus registry
+
+[source,ruby]
+----
+require 'vertx/vertx'
+require 'vertx-web/router'
+vertx = Vertx::Vertx.vertx({
+  'metricsOptions' => {
+    'registryName' => "my registry",
+    'enabled' => true
+  }
+})
+
+# Later on, creating a router
+router = VertxWeb::Router.router(vertx)
+router.route("/custom").handler(&Java::IoVertxMonitoringPrometheusImpl::PrometheusVertxMetrics.create_metrics_handler("my registry"))
+
+----
+
+In this case, Vert.x will create a new Prometheus registry instead of using the default one. This registry is then
+accessible using `link:unavailable#get-class_method[PrometheusRegistries.get]`.
 
 Please refer to `link:../dataobjects.html#VertxPrometheusOptions[VertxPrometheusOptions]` for an exhaustive list of options.
 

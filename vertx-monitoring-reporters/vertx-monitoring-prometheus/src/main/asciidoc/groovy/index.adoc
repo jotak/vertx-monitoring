@@ -53,10 +53,19 @@ def vertx = Vertx.vertx([
 
 [source,groovy]
 ----
-Code not translatable
+def vertx = Vertx.vertx([
+  metricsOptions:[
+    enabled:true,
+    embeddedServerOptions:[
+      port:8080
+    ],
+    embeddedServerEndpoint:"/metrics/vertx"
+  ]
+])
+
 ----
 
-=== Binding an existing Vert.X router
+=== Binding an existing Vert.x router
 
 [source,groovy]
 ----
@@ -71,6 +80,26 @@ def router = Router.router(vertx)
 router.route("/custom").handler(io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics.createMetricsHandler())
 
 ----
+
+=== Using a custom Prometheus registry
+
+[source,groovy]
+----
+def vertx = Vertx.vertx([
+  metricsOptions:[
+    registryName:"my registry",
+    enabled:true
+  ]
+])
+
+// Later on, creating a router
+def router = Router.router(vertx)
+router.route("/custom").handler(io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics.createMetricsHandler("my registry"))
+
+----
+
+In this case, Vert.x will create a new Prometheus registry instead of using the default one. This registry is then
+accessible using `link:../../apidocs/io/vertx/monitoring/prometheus/impl/PrometheusRegistries.html#get-java.lang.String-[PrometheusRegistries.get]`.
 
 Please refer to `link:../../apidocs/io/vertx/monitoring/prometheus/VertxPrometheusOptions.html[VertxPrometheusOptions]` for an exhaustive list of options.
 

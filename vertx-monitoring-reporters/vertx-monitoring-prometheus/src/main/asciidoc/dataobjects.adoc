@@ -16,6 +16,14 @@
 |===
 ^|Name | Type ^| Description
 |[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|-
+|[[embeddedServerEndpoint]]`embeddedServerEndpoint`|`String`|
++++
+Set metrics endpoint. Use conjointly with link
++++
+|[[embeddedServerOptions]]`embeddedServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|
++++
+An embedded server will start to expose metrics with Prometheus format
++++
 |[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
 +++
 Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
@@ -36,24 +44,12 @@ Set whether metrics will be enabled on the Vert.x instance. Metrics are not enab
 +++
 |[[metricsBridgeAddress]]`metricsBridgeAddress`|`String`|-
 |[[metricsBridgeEnabled]]`metricsBridgeEnabled`|`Boolean`|-
-|[[separateRegistry]]`separateRegistry`|`Boolean`|-
-|[[serverOptions]]`serverOptions`|`link:dataobjects.html#VertxPrometheusServerOptions[VertxPrometheusServerOptions]`|-
-|===
-
-[[VertxPrometheusServerOptions]]
-== VertxPrometheusServerOptions
-
-++++
- Vert.x Prometheus embedded server configuration.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[endpoint]]`endpoint`|`String`|-
-|[[host]]`host`|`String`|-
-|[[port]]`port`|`Number (int)`|-
+|[[registryName]]`registryName`|`String`|
++++
+Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
+ To retrieve this registry later, call link
+ Doing so allows to provide application-defined metrics to the same registry.
+ If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
++++
 |===
 

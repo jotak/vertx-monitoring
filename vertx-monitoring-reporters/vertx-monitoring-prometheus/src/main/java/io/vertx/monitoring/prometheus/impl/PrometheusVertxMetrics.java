@@ -41,7 +41,6 @@ import io.vertx.core.spi.metrics.TCPMetrics;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.monitoring.prometheus.VertxPrometheusOptions;
-import io.vertx.monitoring.prometheus.VertxPrometheusServerOptions;
 
 import java.util.Optional;
 
@@ -72,7 +71,8 @@ public class PrometheusVertxMetrics extends DummyVertxMetrics {
   PrometheusVertxMetrics(Vertx vertx, VertxPrometheusOptions options) {
     this.vertx = vertx;
     this.options = options;
-    registry = options.isSeparateRegistry() ? new CollectorRegistry() : CollectorRegistry.defaultRegistry;
+    String registryName = options.getRegistryName();
+    registry = (registryName == null) ? CollectorRegistry.defaultRegistry : PrometheusRegistries.get(registryName);
     eventBusMetrics = options.isMetricsCategoryDisabled(EVENT_BUS) ? Optional.empty()
       : Optional.of(new PrometheusEventBusMetrics(registry));
     datagramSocketMetrics = options.isMetricsCategoryDisabled(DATAGRAM_SOCKET) ? Optional.empty()
@@ -94,10 +94,10 @@ public class PrometheusVertxMetrics extends DummyVertxMetrics {
   @Override
   public void eventBusInitialized(EventBus bus) {
     // We don't actually care about the eventbus here, but we assume it's a good point to start the HTTP server
-    VertxPrometheusServerOptions serverOptions = options.getServerOptions();
+    HttpServerOptions serverOptions = options.getEmbeddedServerOptions();
     if (serverOptions != null) {
       // Start dedicated server
-      server = startServer(serverOptions);
+      server = startServer();
     }
   }
 
@@ -182,16 +182,27 @@ public class PrometheusVertxMetrics extends DummyVertxMetrics {
     }
   }
 
+  /**
+   * Create a metrics handler for vertx router, using the default registry
+   */
   public static Handler<RoutingContext> createMetricsHandler() {
     // Create handler from io.prometheus:simpleclient_vertx
     return new MetricsHandler();
   }
 
-  private HttpServer startServer(VertxPrometheusServerOptions serverOptions) {
-    HttpServerOptions httpServerOptions = new HttpServerOptions().setCompressionSupported(true).setCompressionLevel(6);
+  /**
+   * Create a metrics handler for vertx router, using the registry identified by {@code registryName}
+   */
+  public static Handler<RoutingContext> createMetricsHandler(String registryName) {
+    // Create handler from io.prometheus:simpleclient_vertx
+    return new MetricsHandler(PrometheusRegistries.get(registryName));
+  }
+
+  private HttpServer startServer() {
+    HttpServerOptions serverOptions = options.getEmbeddedServerOptions();
     Router router = Router.router(vertx);
-    router.route(serverOptions.getEndpoint()).handler(createMetricsHandler());
-    return vertx.createHttpServer(httpServerOptions)
+    router.route(options.getEmbeddedServerEndpoint()).handler(new MetricsHandler(registry));
+    return vertx.createHttpServer(serverOptions)
       .requestHandler(router::accept)
       .listen(serverOptions.getPort(), serverOptions.getHost());
   }

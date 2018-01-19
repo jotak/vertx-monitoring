@@ -22,13 +22,13 @@ of this component:
 To use the Prometheus reporter, you need first to get a running Prometheus instance.
 See link:https://prometheus.io/docs/prometheus/latest/installation/[Prometheus installation].
 
-Configure Prometheus to scrape your Vert.X server. Example in `prometheus.yml`:
+Configure Prometheus to scrape your Vert.x server. Example in `prometheus.yml`:
 
 ```yml
 scrape_configs:
   - job_name: 'myapp'
     static_configs:
-      - targets: ['localhost:8080']
+      - targets: ['localhost:9091']
 ```
 
 It will match a configuration like:
@@ -36,5 +36,5 @@ It will match a configuration like:
 ```java
     Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
       new VertxPrometheusOptions().setEnabled(true)
-        .embedServer(new VertxPrometheusServerOptions().port(8080))));
+        .embedServer(new VertxPrometheusServerOptions().port(9091))));
 ```

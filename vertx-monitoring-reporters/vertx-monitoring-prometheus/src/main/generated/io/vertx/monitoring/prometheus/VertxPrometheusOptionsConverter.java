@@ -35,6 +35,12 @@ public class VertxPrometheusOptionsConverter {
       });
       obj.setDisabledMetricsCategories(list);
     }
+    if (json.getValue("embeddedServerEndpoint") instanceof String) {
+      obj.setEmbeddedServerEndpoint((String)json.getValue("embeddedServerEndpoint"));
+    }
+    if (json.getValue("embeddedServerOptions") instanceof JsonObject) {
+      obj.setEmbeddedServerOptions(new io.vertx.core.http.HttpServerOptions((JsonObject)json.getValue("embeddedServerOptions")));
+    }
     if (json.getValue("enableRemoteLabelForClients") instanceof Boolean) {
       obj.setEnableRemoteLabelForClients((Boolean)json.getValue("enableRemoteLabelForClients"));
     }
@@ -50,11 +56,8 @@ public class VertxPrometheusOptionsConverter {
     if (json.getValue("metricsBridgeEnabled") instanceof Boolean) {
       obj.setMetricsBridgeEnabled((Boolean)json.getValue("metricsBridgeEnabled"));
     }
-    if (json.getValue("separateRegistry") instanceof Boolean) {
-      obj.setSeparateRegistry((Boolean)json.getValue("separateRegistry"));
-    }
-    if (json.getValue("serverOptions") instanceof JsonObject) {
-      obj.setServerOptions(new io.vertx.monitoring.prometheus.VertxPrometheusServerOptions((JsonObject)json.getValue("serverOptions")));
+    if (json.getValue("registryName") instanceof String) {
+      obj.setRegistryName((String)json.getValue("registryName"));
     }
   }
 
@@ -64,6 +67,12 @@ public class VertxPrometheusOptionsConverter {
       obj.getDisabledMetricsCategories().forEach(item -> array.add(item.name()));
       json.put("disabledMetricsCategories", array);
     }
+    if (obj.getEmbeddedServerEndpoint() != null) {
+      json.put("embeddedServerEndpoint", obj.getEmbeddedServerEndpoint());
+    }
+    if (obj.getEmbeddedServerOptions() != null) {
+      json.put("embeddedServerOptions", obj.getEmbeddedServerOptions().toJson());
+    }
     json.put("enableRemoteLabelForClients", obj.isEnableRemoteLabelForClients());
     json.put("enableRemoteLabelForServers", obj.isEnableRemoteLabelForServers());
     json.put("enabled", obj.isEnabled());
@@ -71,6 +80,8 @@ public class VertxPrometheusOptionsConverter {
       json.put("metricsBridgeAddress", obj.getMetricsBridgeAddress());
     }
     json.put("metricsBridgeEnabled", obj.isMetricsBridgeEnabled());
-    json.put("separateRegistry", obj.isSeparateRegistry());
+    if (obj.getRegistryName() != null) {
+      json.put("registryName", obj.getRegistryName());
+    }
   }
 }

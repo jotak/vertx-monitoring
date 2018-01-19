@@ -1,8 +1,8 @@
 package io.vertx.kotlin.monitoring.prometheus
 
 import io.vertx.monitoring.prometheus.VertxPrometheusOptions
+import io.vertx.core.http.HttpServerOptions
 import io.vertx.monitoring.common.MetricsCategory
-import io.vertx.monitoring.prometheus.VertxPrometheusServerOptions
 
 /**
  * A function providing a DSL for building [io.vertx.monitoring.prometheus.VertxPrometheusOptions] objects.
@@ -13,29 +13,37 @@ import io.vertx.monitoring.prometheus.VertxPrometheusServerOptions
  * <code>myRouter.route("/metrics").handler(PrometheusVertxMetrics.createMetricsHandler());</code>
  *
  * @param disabledMetricsCategories 
+ * @param embeddedServerEndpoint  Set metrics endpoint. Use conjointly with [io.vertx.monitoring.prometheus.VertxPrometheusOptions]
+ * @param embeddedServerOptions  An embedded server will start to expose metrics with Prometheus format
  * @param enableRemoteLabelForClients  Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote. This is relevant when the application makes client connections to a large number of different clients, in order to reduce the number of related prometheus metrics created.<br/> This option is set to <i>true</i> by default.
  * @param enableRemoteLabelForServers  Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote. This is relevant when the number of clients connecting to the application servers is small and under control, in order to reduce the number of related prometheus metrics created.<br/> This option is set to <i>false</i> by default.
  * @param enabled  Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
  * @param metricsBridgeAddress 
  * @param metricsBridgeEnabled 
- * @param separateRegistry 
- * @param serverOptions 
+ * @param registryName  Set a name for the prometheus registry, so that a new registry will be created and associated with this name. To retrieve this registry later, call [io.vertx.monitoring.prometheus.impl.PrometheusRegistries] Doing so allows to provide application-defined metrics to the same registry. If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
  *
  * <p/>
  * NOTE: This function has been automatically generated from the [io.vertx.monitoring.prometheus.VertxPrometheusOptions original] using Vert.x codegen.
  */
 fun VertxPrometheusOptions(
   disabledMetricsCategories: Iterable<MetricsCategory>? = null,
+  embeddedServerEndpoint: String? = null,
+  embeddedServerOptions: io.vertx.core.http.HttpServerOptions? = null,
   enableRemoteLabelForClients: Boolean? = null,
   enableRemoteLabelForServers: Boolean? = null,
   enabled: Boolean? = null,
   metricsBridgeAddress: String? = null,
   metricsBridgeEnabled: Boolean? = null,
-  separateRegistry: Boolean? = null,
-  serverOptions: io.vertx.monitoring.prometheus.VertxPrometheusServerOptions? = null): VertxPrometheusOptions = io.vertx.monitoring.prometheus.VertxPrometheusOptions().apply {
+  registryName: String? = null): VertxPrometheusOptions = io.vertx.monitoring.prometheus.VertxPrometheusOptions().apply {
 
   if (disabledMetricsCategories != null) {
     this.setDisabledMetricsCategories(disabledMetricsCategories.toSet())
+  }
+  if (embeddedServerEndpoint != null) {
+    this.setEmbeddedServerEndpoint(embeddedServerEndpoint)
+  }
+  if (embeddedServerOptions != null) {
+    this.setEmbeddedServerOptions(embeddedServerOptions)
   }
   if (enableRemoteLabelForClients != null) {
     this.setEnableRemoteLabelForClients(enableRemoteLabelForClients)
@@ -52,11 +60,8 @@ fun VertxPrometheusOptions(
   if (metricsBridgeEnabled != null) {
     this.setMetricsBridgeEnabled(metricsBridgeEnabled)
   }
-  if (separateRegistry != null) {
-    this.setSeparateRegistry(separateRegistry)
-  }
-  if (serverOptions != null) {
-    this.setServerOptions(serverOptions)
+  if (registryName != null) {
+    this.setRegistryName(registryName)
   }
 }
 

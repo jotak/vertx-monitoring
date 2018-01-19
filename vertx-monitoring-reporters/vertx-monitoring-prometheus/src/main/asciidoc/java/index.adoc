@@ -51,12 +51,11 @@ Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
 ----
 Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
   new VertxPrometheusOptions().setEnabled(true)
-    .embedServer(new VertxPrometheusServerOptions()
-      .port(8080)
-      .endpoint("/metrics/vertx"))));
+    .setEmbeddedServerOptions(new HttpServerOptions().setPort(8080))
+    .setEmbeddedServerEndpoint("/metrics/vertx")));
 ----
 
-=== Binding an existing Vert.X router
+=== Binding an existing Vert.x router
 
 [source,java]
 ----
@@ -67,6 +66,21 @@ Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
 Router router = Router.router(vertx);
 router.route("/custom").handler(PrometheusVertxMetrics.createMetricsHandler());
 ----
+
+=== Using a custom Prometheus registry
+
+[source,java]
+----
+Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
+  new VertxPrometheusOptions().setRegistryName("my registry").setEnabled(true)));
+
+// Later on, creating a router
+Router router = Router.router(vertx);
+router.route("/custom").handler(PrometheusVertxMetrics.createMetricsHandler("my registry"));
+----
+
+In this case, Vert.x will create a new Prometheus registry instead of using the default one. This registry is then
+accessible using `link:../../apidocs/io/vertx/monitoring/prometheus/impl/PrometheusRegistries.html#get-java.lang.String-[PrometheusRegistries.get]`.
 
 Please refer to `link:../../apidocs/io/vertx/monitoring/prometheus/VertxPrometheusOptions.html[VertxPrometheusOptions]` for an exhaustive list of options.
 

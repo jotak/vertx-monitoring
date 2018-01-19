@@ -54,10 +54,20 @@ var vertx = Vertx.vertx({
 
 [source,js]
 ----
-Code not translatable
+var Vertx = require("vertx-js/vertx");
+var vertx = Vertx.vertx({
+  "metricsOptions" : {
+    "enabled" : true,
+    "embeddedServerOptions" : {
+      "port" : 8080
+    },
+    "embeddedServerEndpoint" : "/metrics/vertx"
+  }
+});
+
 ----
 
-=== Binding an existing Vert.X router
+=== Binding an existing Vert.x router
 
 [source,js]
 ----
@@ -74,6 +84,28 @@ var router = Router.router(vertx);
 router.route("/custom").handler(Java.type("io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics").createMetricsHandler());
 
 ----
+
+=== Using a custom Prometheus registry
+
+[source,js]
+----
+var Vertx = require("vertx-js/vertx");
+var Router = require("vertx-web-js/router");
+var vertx = Vertx.vertx({
+  "metricsOptions" : {
+    "registryName" : "my registry",
+    "enabled" : true
+  }
+});
+
+// Later on, creating a router
+var router = Router.router(vertx);
+router.route("/custom").handler(Java.type("io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics").createMetricsHandler("my registry"));
+
+----
+
+In this case, Vert.x will create a new Prometheus registry instead of using the default one. This registry is then
+accessible using `PrometheusRegistries.get`.
 
 Please refer to `link:../dataobjects.html#VertxPrometheusOptions[VertxPrometheusOptions]` for an exhaustive list of options.
 

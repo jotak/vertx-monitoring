@@ -17,11 +17,11 @@ package examples;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.docgen.Source;
 import io.vertx.ext.web.Router;
 import io.vertx.monitoring.common.MetricsCategory;
 import io.vertx.monitoring.prometheus.VertxPrometheusOptions;
-import io.vertx.monitoring.prometheus.VertxPrometheusServerOptions;
 import io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics;
 
 /**
@@ -41,15 +41,14 @@ public class MetricsExamples {
   public void setupEmbeddedServer() {
     Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
       new VertxPrometheusOptions().setEnabled(true)
-        .embedServer(new VertxPrometheusServerOptions())));
+        .setEmbeddedServerOptions(new HttpServerOptions())));
   }
 
   public void setupEmbeddedServerWithOptions() {
     Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
       new VertxPrometheusOptions().setEnabled(true)
-        .embedServer(new VertxPrometheusServerOptions()
-          .port(8080)
-          .endpoint("/metrics/vertx"))));
+        .setEmbeddedServerOptions(new HttpServerOptions().setPort(8080))
+        .setEmbeddedServerEndpoint("/metrics/vertx")));
   }
 
   public void setupBoundRouter() {
@@ -59,6 +58,15 @@ public class MetricsExamples {
     // Later on, creating a router
     Router router = Router.router(vertx);
     router.route("/custom").handler(PrometheusVertxMetrics.createMetricsHandler());
+  }
+
+  public void setupBoundRouterWithCustomRegistry() {
+    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
+      new VertxPrometheusOptions().setRegistryName("my registry").setEnabled(true)));
+
+    // Later on, creating a router
+    Router router = Router.router(vertx);
+    router.route("/custom").handler(PrometheusVertxMetrics.createMetricsHandler("my registry"));
   }
 
   public void setupDisabledMetricsTypes() {

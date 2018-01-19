@@ -20,13 +20,13 @@ import io.prometheus.client.CollectorRegistry;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.Router;
 import io.vertx.monitoring.common.MetricsCategory;
 import io.vertx.monitoring.prometheus.VertxPrometheusOptions;
-import io.vertx.monitoring.prometheus.VertxPrometheusServerOptions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class PrometheusMetricsTest {
   public void shouldStartDedicatedServer(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
       .setMetricsOptions(new VertxPrometheusOptions().setEnabled(true)
-        .embedServer(new VertxPrometheusServerOptions())));
+        .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))));
 
     Async async = context.async();
     HttpClientRequest req = vertx.createHttpClient()
@@ -96,12 +96,12 @@ public class PrometheusMetricsTest {
   public void shouldExcludeVerticleMetrics(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
       .setMetricsOptions(new VertxPrometheusOptions().setEnabled(true)
-        .embedServer(new VertxPrometheusServerOptions().port(8080))
+        .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))
         .addDisabledMetricsCategory(MetricsCategory.VERTICLES)));
 
     Async async = context.async();
     HttpClientRequest req = vertx.createHttpClient()
-      .get(8080, "localhost", "/metrics")
+      .get(9090, "localhost", "/metrics")
       .handler(res -> {
         context.assertEquals(200, res.statusCode());
         res.bodyHandler(body -> {
@@ -118,7 +118,7 @@ public class PrometheusMetricsTest {
   public void shouldExposeEventBusMetrics(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
       .setMetricsOptions(new VertxPrometheusOptions().setEnabled(true)
-        .embedServer(new VertxPrometheusServerOptions())));
+        .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))));
 
     // Send something on the eventbus and wait til it's received
     Async asyncEB = context.async();
@@ -141,6 +141,45 @@ public class PrometheusMetricsTest {
             .contains("vertx_eventbus_delivered{address=\"test-eb\",side=\"local\",} 1.0")
             .contains("vertx_eventbus_processing_time_count{address=\"test-eb\",} 1.0"));
           async.complete();
+        });
+      });
+    req.end();
+  }
+
+  @Test
+  public void shouldBindExistingServerWithCustomRegistry(TestContext context) {
+    vertx = Vertx.vertx(new VertxOptions()
+      .setMetricsOptions(new VertxPrometheusOptions().setRegistryName("custom").setEnabled(true)));
+
+    Router router = Router.router(vertx);
+    // This endpoint is bound to the default registry => should not provide any metric
+    router.route("/default").handler(PrometheusVertxMetrics.createMetricsHandler());
+    // This endpoint is bound to the custom registry => should provide vertx metrics
+    router.route("/custom").handler(PrometheusVertxMetrics.createMetricsHandler("custom"));
+    vertx.createHttpServer().requestHandler(router::accept).listen(8081);
+
+    Async async = context.async();
+    HttpClientRequest req = vertx.createHttpClient()
+      .get(8081, "localhost", "/default")
+      .handler(res -> {
+        context.assertEquals(200, res.statusCode());
+        res.bodyHandler(body -> {
+          context.verify(v -> assertThat(body.toString()).isEmpty());
+          async.complete();
+        });
+      });
+    req.end();
+    async.awaitSuccess();
+
+    Async async2 = context.async();
+    req = vertx.createHttpClient()
+      .get(8081, "localhost", "/custom")
+      .handler(res -> {
+        context.assertEquals(200, res.statusCode());
+        res.bodyHandler(body -> {
+          context.verify(v -> assertThat(body.toString())
+            .contains("# HELP vertx_verticle"));
+          async2.complete();
         });
       });
     req.end();
