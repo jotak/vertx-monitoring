@@ -39,8 +39,6 @@ Set true to allow generation of a label named "remote" on server-related metrics
 +++
 Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
 +++
-|[[metricsBridgeAddress]]`metricsBridgeAddress`|`String`|-
-|[[metricsBridgeEnabled]]`metricsBridgeEnabled`|`Boolean`|-
 |[[registryName]]`registryName`|`String`|
 +++
 Set a name for the prometheus registry, so that a new registry will be created and associated with this name.

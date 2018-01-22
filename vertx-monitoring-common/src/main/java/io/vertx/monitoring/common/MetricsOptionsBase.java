@@ -30,32 +30,14 @@ import java.util.Set;
  */
 @DataObject(generateConverter = true, inheritConverter = true)
 public abstract class MetricsOptionsBase extends MetricsOptions {
-
-  /**
-   * Default event bus address where applications can send business-related metrics. The metrics are sent as JSON
-   * message containing at least the <code>source</code> and <code>value</code> fields.
-   */
-  public static final String DEFAULT_METRICS_BRIDGE_ADDRESS = "metrics.bridge";
-
-  /**
-   * The default value to enable / disable the metrics bridge. Disable by default.
-   */
-  public static final boolean DEFAULT_METRICS_BRIDGE_ENABLED = false;
-
-  private boolean metricsBridgeEnabled;
-  private String metricsBridgeAddress;
   private Set<MetricsCategory> disabledMetricsCategories;
 
   public MetricsOptionsBase() {
-    metricsBridgeEnabled = DEFAULT_METRICS_BRIDGE_ENABLED;
-    metricsBridgeAddress = DEFAULT_METRICS_BRIDGE_ADDRESS;
     disabledMetricsCategories = EnumSet.noneOf(MetricsCategory.class);
   }
 
   public MetricsOptionsBase(MetricsOptionsBase other) {
     super(other);
-    metricsBridgeAddress = other.metricsBridgeAddress;
-    metricsBridgeEnabled = other.metricsBridgeEnabled;
     disabledMetricsCategories = other.disabledMetricsCategories != null ? EnumSet.copyOf(other.disabledMetricsCategories) : EnumSet.noneOf(MetricsCategory.class);
   }
 
@@ -70,50 +52,6 @@ public abstract class MetricsOptionsBase extends MetricsOptions {
   @Override
   public MetricsOptionsBase setEnabled(boolean enable) {
     super.setEnabled(enable);
-    return this;
-  }
-
-  /**
-   * @return the metric bridge address. If enabled the metric bridge transfers metrics collected from the event bus to
-   * the reporter. The metrics are sent as message on the event bus to the return address. The message is a
-   * JSON object specifying at least the {@code source} and {@code value} fields ({@code value} is a double).
-   */
-  public String getMetricsBridgeAddress() {
-    return metricsBridgeAddress;
-  }
-
-  /**
-   * Sets the metric bridge address on which the application is sending the custom metrics. Application can send
-   * metrics to this event bus address. The message is a JSON object specifying at least the {@code id} and
-   * {@code value} fields.
-   * <p/>
-   * Don't forget to also enable the bridge with {@code metricsBridgeEnabled}.
-   *
-   * @param metricsBridgeAddress the address
-   * @return a reference to this, so that the API can be used fluently
-   */
-  public MetricsOptionsBase setMetricsBridgeAddress(String metricsBridgeAddress) {
-    this.metricsBridgeAddress = metricsBridgeAddress;
-    return this;
-  }
-
-  /**
-   * Checks whether or not the metrics bridge is enabled.
-   *
-   * @return {@code true} if the metrics bridge is enabled, {@code false} otherwise.
-   */
-  public boolean isMetricsBridgeEnabled() {
-    return metricsBridgeEnabled;
-  }
-
-  /**
-   * Sets whether or not the metrics bridge should be enabled. The metrics bridge is disabled by default.
-   *
-   * @param metricsBridgeEnabled {@code true} to enable the bridge, {@code false} to disable it.
-   * @return a reference to this, so that the API can be used fluently
-   */
-  public MetricsOptionsBase setMetricsBridgeEnabled(boolean metricsBridgeEnabled) {
-    this.metricsBridgeEnabled = metricsBridgeEnabled;
     return this;
   }
 

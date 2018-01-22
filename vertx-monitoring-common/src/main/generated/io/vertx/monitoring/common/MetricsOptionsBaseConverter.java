@@ -38,12 +38,6 @@ public class MetricsOptionsBaseConverter {
     if (json.getValue("enabled") instanceof Boolean) {
       obj.setEnabled((Boolean)json.getValue("enabled"));
     }
-    if (json.getValue("metricsBridgeAddress") instanceof String) {
-      obj.setMetricsBridgeAddress((String)json.getValue("metricsBridgeAddress"));
-    }
-    if (json.getValue("metricsBridgeEnabled") instanceof Boolean) {
-      obj.setMetricsBridgeEnabled((Boolean)json.getValue("metricsBridgeEnabled"));
-    }
   }
 
   public static void toJson(MetricsOptionsBase obj, JsonObject json) {
@@ -53,9 +47,5 @@ public class MetricsOptionsBaseConverter {
       json.put("disabledMetricsCategories", array);
     }
     json.put("enabled", obj.isEnabled());
-    if (obj.getMetricsBridgeAddress() != null) {
-      json.put("metricsBridgeAddress", obj.getMetricsBridgeAddress());
-    }
-    json.put("metricsBridgeEnabled", obj.isMetricsBridgeEnabled());
   }
 }

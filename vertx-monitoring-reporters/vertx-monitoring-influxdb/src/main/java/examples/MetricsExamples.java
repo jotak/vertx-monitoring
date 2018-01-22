@@ -93,17 +93,17 @@ public class MetricsExamples {
   public void enableMetricsBridge() {
     Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
       new VertxInfluxDbOptions()
-        .setEnabled(true)
         .setMetricsBridgeEnabled(true)
+        .setEnabled(true)
     ));
   }
 
   public void customMetricsBridgeAddress() {
     Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
       new VertxInfluxDbOptions()
-        .setEnabled(true)
         .setMetricsBridgeEnabled(true)
         .setMetricsBridgeAddress("__influxdb_metrics")
+        .setEnabled(true)
     ));
   }
 

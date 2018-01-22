@@ -26,8 +26,18 @@ Set the maximum number of metrics in a batch. To reduce the number of HTTP excha
 +++
 |[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|-
 |[[enabled]]`enabled`|`Boolean`|-
-|[[metricsBridgeAddress]]`metricsBridgeAddress`|`String`|-
-|[[metricsBridgeEnabled]]`metricsBridgeEnabled`|`Boolean`|-
+|[[metricsBridgeAddress]]`metricsBridgeAddress`|`String`|
++++
+Sets the metric bridge address on which the application is sending the custom metrics. Application can send
+ metrics to this event bus address. The message is a JSON object specifying at least the <code>id</code> and
+ <code>value</code> fields.
+ <p/>
+ Don't forget to also enable the bridge with <code>metricsBridgeEnabled</code>.
++++
+|[[metricsBridgeEnabled]]`metricsBridgeEnabled`|`Boolean`|
++++
+Sets whether or not the metrics bridge should be enabled. The metrics bridge is disabled by default.
++++
 |[[prefix]]`prefix`|`String`|
 +++
 Set the metric name prefix. Metric names are not prefixed by default. Prefixing metric names is required to

@@ -48,16 +48,31 @@ public class BatchingReporterOptions extends MetricsOptionsBase {
    */
   public static final int DEFAULT_BATCH_DELAY = 1;
 
+  /**
+   * Default event bus address where applications can send business-related metrics. The metrics are sent as JSON
+   * message containing at least the <code>source</code> and <code>value</code> fields.
+   */
+  public static final String DEFAULT_METRICS_BRIDGE_ADDRESS = "metrics.bridge";
+
+  /**
+   * The default value to enable / disable the metrics bridge. Disable by default.
+   */
+  public static final boolean DEFAULT_METRICS_BRIDGE_ENABLED = false;
+
   private String prefix;
   private int schedule;
   private int batchSize;
   private int batchDelay;
+  private boolean metricsBridgeEnabled;
+  private String metricsBridgeAddress;
 
   public BatchingReporterOptions() {
     prefix = DEFAULT_PREFIX;
     schedule = DEFAULT_SCHEDULE;
     batchSize = DEFAULT_BATCH_SIZE;
     batchDelay = DEFAULT_BATCH_DELAY;
+    metricsBridgeEnabled = DEFAULT_METRICS_BRIDGE_ENABLED;
+    metricsBridgeAddress = DEFAULT_METRICS_BRIDGE_ADDRESS;
   }
 
   public BatchingReporterOptions(BatchingReporterOptions other) {
@@ -66,6 +81,8 @@ public class BatchingReporterOptions extends MetricsOptionsBase {
     schedule = other.schedule;
     batchSize = other.batchSize;
     batchDelay = other.batchDelay;
+    metricsBridgeAddress = other.metricsBridgeAddress;
+    metricsBridgeEnabled = other.metricsBridgeEnabled;
   }
 
   public BatchingReporterOptions(JsonObject json) {
@@ -135,6 +152,50 @@ public class BatchingReporterOptions extends MetricsOptionsBase {
    */
   public BatchingReporterOptions setBatchDelay(int batchDelay) {
     this.batchDelay = batchDelay;
+    return this;
+  }
+
+  /**
+   * @return the metric bridge address. If enabled the metric bridge transfers metrics collected from the event bus to
+   * the reporter. The metrics are sent as message on the event bus to the return address. The message is a
+   * JSON object specifying at least the {@code source} and {@code value} fields ({@code value} is a double).
+   */
+  public String getMetricsBridgeAddress() {
+    return metricsBridgeAddress;
+  }
+
+  /**
+   * Sets the metric bridge address on which the application is sending the custom metrics. Application can send
+   * metrics to this event bus address. The message is a JSON object specifying at least the {@code id} and
+   * {@code value} fields.
+   * <p/>
+   * Don't forget to also enable the bridge with {@code metricsBridgeEnabled}.
+   *
+   * @param metricsBridgeAddress the address
+   * @return a reference to this, so that the API can be used fluently
+   */
+  public BatchingReporterOptions setMetricsBridgeAddress(String metricsBridgeAddress) {
+    this.metricsBridgeAddress = metricsBridgeAddress;
+    return this;
+  }
+
+  /**
+   * Checks whether or not the metrics bridge is enabled.
+   *
+   * @return {@code true} if the metrics bridge is enabled, {@code false} otherwise.
+   */
+  public boolean isMetricsBridgeEnabled() {
+    return metricsBridgeEnabled;
+  }
+
+  /**
+   * Sets whether or not the metrics bridge should be enabled. The metrics bridge is disabled by default.
+   *
+   * @param metricsBridgeEnabled {@code true} to enable the bridge, {@code false} to disable it.
+   * @return a reference to this, so that the API can be used fluently
+   */
+  public BatchingReporterOptions setMetricsBridgeEnabled(boolean metricsBridgeEnabled) {
+    this.metricsBridgeEnabled = metricsBridgeEnabled;
     return this;
   }
 }

@@ -372,8 +372,8 @@ enabled:
 ----
 Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
   new VertxInfluxDbOptions()
-    .setEnabled(true)
     .setMetricsBridgeEnabled(true)
+    .setEnabled(true)
 ));
 ----
 
@@ -384,9 +384,9 @@ can be configured:
 ----
 Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
   new VertxInfluxDbOptions()
-    .setEnabled(true)
     .setMetricsBridgeEnabled(true)
     .setMetricsBridgeAddress("__influxdb_metrics")
+    .setEnabled(true)
 ));
 ----
 

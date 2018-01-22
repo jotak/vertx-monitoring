@@ -19,6 +19,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.monitoring.collector.BatchingReporterOptions;
+import io.vertx.monitoring.common.MetricsOptionsBase;
 
 /**
  * Vert.x InfluxDb monitoring configuration.
@@ -65,7 +66,6 @@ public class VertxInfluxDbOptions extends BatchingReporterOptions {
   private String measurement;
   private AuthenticationOptions authenticationOptions;
   private JsonObject httpHeaders;
-
   private boolean gzipEnabled;
 
   public VertxInfluxDbOptions() {
