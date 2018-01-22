@@ -48,7 +48,8 @@
   <modules>
     <module>vertx-monitoring-common</module>
     <module>vertx-monitoring-collector</module>
-    <module>vertx-monitoring-reporters</module>
+    <module>vertx-monitoring-reporters/vertx-monitoring-influxdb</module>
+    <module>vertx-monitoring-reporters/vertx-monitoring-prometheus</module>
   </modules>
 
   <dependencyManagement>

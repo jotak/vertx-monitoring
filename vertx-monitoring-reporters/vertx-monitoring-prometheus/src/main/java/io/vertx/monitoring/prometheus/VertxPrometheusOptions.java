@@ -19,13 +19,9 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.monitoring.common.MetricsOptionsBase;
-import io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics;
 
 /**
  * Vert.x Prometheus monitoring configuration.
- * If no embedded server is used, you can bind an existing {@link io.vertx.ext.web.Router} with {@link PrometheusVertxMetrics#createMetricsHandler()}<br/>
- * Ex:<br/>
- * {@code myRouter.route("/metrics").handler(PrometheusVertxMetrics.createMetricsHandler());}
  *
  * @author Joel Takvorian
  */
@@ -109,7 +105,7 @@ public class VertxPrometheusOptions extends MetricsOptionsBase {
 
   /**
    * Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
-   * To retrieve this registry later, call {@link io.vertx.monitoring.prometheus.impl.PrometheusRegistries#get(String)}
+   * To retrieve this registry later, call {@code PrometheusRegistries.get(String)}
    * Doing so allows to provide application-defined metrics to the same registry.
    * If {@code registryName} is not provided (or null), Prometheus default registry will be used.
    * @param registryName a name to uniquely identify this registry
@@ -150,7 +146,7 @@ public class VertxPrometheusOptions extends MetricsOptionsBase {
   }
 
   /**
-   * Set metrics endpoint. Use conjointly with {@link VertxPrometheusOptions#setEmbeddedServerOptions(HttpServerOptions)}
+   * Set metrics endpoint. Use conjointly with the embedded server options.
    * @param embeddedServerEndpoint metrics endpoint
    */
   public VertxPrometheusOptions setEmbeddedServerEndpoint(String embeddedServerEndpoint) {

@@ -5,9 +5,6 @@
 
 ++++
  Vert.x Prometheus monitoring configuration.
- If no embedded server is used, you can bind an existing link with <br/>
- Ex:<br/>
- <code>myRouter.route("/metrics").handler(PrometheusVertxMetrics.createMetricsHandler());</code>
 ++++
 '''
 
@@ -18,7 +15,7 @@
 |[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|-
 |[[embeddedServerEndpoint]]`embeddedServerEndpoint`|`String`|
 +++
-Set metrics endpoint. Use conjointly with link
+Set metrics endpoint. Use conjointly with the embedded server options.
 +++
 |[[embeddedServerOptions]]`embeddedServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|
 +++
@@ -47,7 +44,7 @@ Set whether metrics will be enabled on the Vert.x instance. Metrics are not enab
 |[[registryName]]`registryName`|`String`|
 +++
 Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
- To retrieve this registry later, call link
+ To retrieve this registry later, call <code>PrometheusRegistries.get(String)</code>
  Doing so allows to provide application-defined metrics to the same registry.
  If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
 +++
