@@ -15,7 +15,7 @@ Follow the https://prometheus.io/docs/prometheus/latest/getting_started/[instruc
 
 == Getting started
 
-The _vertx-prometheus-metrics_ module must be present in the classpath.
+The _vertx-monitoring-prometheus_ module must be present in the classpath.
 
 Maven users should add this to their project POM file:
 
@@ -23,7 +23,7 @@ Maven users should add this to their project POM file:
 ----
 <dependency>
   <groupId>io.vertx</groupId>
-  <artifactId>vertx-prometheus-metrics</artifactId>
+  <artifactId>vertx-monitoring-prometheus</artifactId>
   <version>3.5.1-SNAPSHOT</version>
 </dependency>
 ----
@@ -32,7 +32,7 @@ And Gradle users, to their build file:
 
 [source,groovy,subs="+attributes"]
 ----
-compile 'io.vertx:vertx-prometheus-metrics:3.5.1-SNAPSHOT'
+compile 'io.vertx:vertx-monitoring-prometheus:3.5.1-SNAPSHOT'
 ----
 
 Vert.x does not enable SPI implementations by default. You must enable metric collection in the Vert.x options:
@@ -47,7 +47,7 @@ def vertx = Vertx.vertx([
 
 ----
 
-== Configuration
+== Configuration examples
 
 === Using an embedded HTTP server for exposing endpoints
 
@@ -65,7 +65,7 @@ def vertx = Vertx.vertx([
 
 ----
 
-=== Binding an existing Vert.x router
+=== Binding to an existing Vert.x router
 
 [source,groovy]
 ----

@@ -150,7 +150,7 @@ public class VertxPrometheusOptions extends MetricsOptionsBase {
   }
 
   /**
-   * Set metrics endpoint. Use conjointly with {@link #setEmbeddedServerOptions(HttpServerOptions)}
+   * Set metrics endpoint. Use conjointly with {@link VertxPrometheusOptions#setEmbeddedServerOptions(HttpServerOptions)}
    * @param embeddedServerEndpoint metrics endpoint
    */
   public VertxPrometheusOptions setEmbeddedServerEndpoint(String embeddedServerEndpoint) {
