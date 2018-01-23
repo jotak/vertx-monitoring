@@ -380,8 +380,8 @@
  * |===
  *
  */
-@ModuleGen(name = "vertx-prometheus", groupPackage = "io.vertx")
-@Document(fileName = "index.adoc")
+@ModuleGen(name = "vertx-monitoring", groupPackage = "io.vertx")
+@Document(fileName = "prometheus.adoc")
 package io.vertx.monitoring.prometheus;
 
 import io.vertx.codegen.annotations.ModuleGen;

@@ -3,18 +3,14 @@ package io.vertx.monitoring.collector.impl;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.datagram.DatagramSocket;
-import io.vertx.core.spi.VertxMetricsFactory;
-import io.vertx.monitoring.collector.BatchingReporterOptions;
-import io.vertx.monitoring.collector.DummyVertxMetrics;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import io.vertx.monitoring.collector.BatchingReporterOptions;
+import io.vertx.monitoring.collector.DummyVertxMetrics;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -27,12 +23,6 @@ public class DatagramSocketTest {
 
   private Object watcherRef;
 
-  @Before
-  public void setup() {
-//    ServiceLoader.load(DummyVertxMetrics.class); // io.vertx.core.spi.VertxMetricsFactory
-    ServiceLoader.load(VertxMetricsFactory.class); // io.vertx.core.spi.VertxMetricsFactory
-  }
-
   @After
   public void teardown() {
     if (watcherRef != null) {
@@ -42,21 +32,21 @@ public class DatagramSocketTest {
 
   @Test
   public void shouldReportDatagramMetrics(TestContext context) throws InterruptedException {
-    //Async async = context.async();
+    Async async = context.async();
     String datagramContent = "some text";
     int loops = 5;
-//    watcherRef = DummyVertxMetrics.REPORTER.watch(
-//      name -> name.startsWith("vertx.datagram"),  // filter
-//      dp -> dp.getName().startsWith("vertx.datagram.localhost:9192"), // wait until
-//      dataPoints -> {
-//        context.verify(v -> assertThat(dataPoints).extracting(DataPoint::getName, DataPoint::getValue)
-//          .containsOnly(
-//            tuple("vertx.datagram.localhost:9192.bytesSent", 45L),  // 45 = size("some text") * loops
-//            tuple("vertx.datagram.localhost:9192.bytesReceived", 45L), // same
-//            tuple("vertx.datagram.errorCount", 0L)));
-//        async.complete();
-//      },
-//      context::fail);
+    watcherRef = DummyVertxMetrics.REPORTER.watch(
+      name -> name.startsWith("vertx.datagram"),  // filter
+      dp -> dp.getName().startsWith("vertx.datagram.localhost:9192"), // wait until
+      dataPoints -> {
+        context.verify(v -> assertThat(dataPoints).extracting(DataPoint::getName, DataPoint::getValue)
+          .containsOnly(
+            tuple("vertx.datagram.localhost:9192.bytesSent", 45L),  // 45 = size("some text") * loops
+            tuple("vertx.datagram.localhost:9192.bytesReceived", 45L), // same
+            tuple("vertx.datagram.errorCount", 0L)));
+        async.complete();
+      },
+      context::fail);
 
     Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new BatchingReporterOptions().setEnabled(true)))
       .exceptionHandler(context.exceptionHandler());

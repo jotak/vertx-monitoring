@@ -416,8 +416,8 @@
  *
  * NOTE: InfluxDb understands all timestamps as milliseconds since January 1, 1970, 00:00:00 UTC.
  */
-@ModuleGen(name = "vertx-influxdb", groupPackage = "io.vertx")
-@Document(fileName = "index.adoc")
+@ModuleGen(name = "vertx-monitoring", groupPackage = "io.vertx")
+@Document(fileName = "influxdb.adoc")
 package io.vertx.monitoring.influxdb;
 
 import io.vertx.codegen.annotations.ModuleGen;
