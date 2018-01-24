@@ -26,85 +26,8 @@ Set the identifier used for authentication.
 +++
 |===
 
-[[BatchingReporterOptions]]
-== BatchingReporterOptions
-
-++++
- Common options for reporters sending metrics in batches.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[batchDelay]]`batchDelay`|`Number (int)`|
-+++
-Set the maximum delay between two consecutive batches (in seconds). To reduce the number of HTTP exchanges, metric
- data is sent by the reporter in batches. A batch is sent as soon as the number of metrics collected reaches
- the configured <code>batchSize</code>, or after the <code>batchDelay</code> expires. Defaults to <code>1</code> second.
-+++
-|[[batchSize]]`batchSize`|`Number (int)`|
-+++
-Set the maximum number of metrics in a batch. To reduce the number of HTTP exchanges, metric data is sent by the
- reporter in batches. A batch is sent as soon as the number of metrics collected reaches the configured
- <code>batchSize</code>, or after the <code>batchDelay</code> expires. Defaults to <code>50</code>.
-+++
-|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
-+++
-Sets metrics types that are disabled.
-+++
-|[[enabled]]`enabled`|`Boolean`|
-+++
-Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
-+++
-|[[metricsBridgeAddress]]`metricsBridgeAddress`|`String`|
-+++
-Sets the metric bridge address on which the application is sending the custom metrics. Application can send
- metrics to this event bus address. The message is a JSON object specifying at least the <code>id</code> and
- <code>value</code> fields.
- <p/>
- Don't forget to also enable the bridge with <code>metricsBridgeEnabled</code>.
-+++
-|[[metricsBridgeEnabled]]`metricsBridgeEnabled`|`Boolean`|
-+++
-Sets whether or not the metrics bridge should be enabled. The metrics bridge is disabled by default.
-+++
-|[[prefix]]`prefix`|`String`|
-+++
-Set the metric name prefix. Metric names are not prefixed by default. Prefixing metric names is required to
- distinguish data sent by different Vert.x instances.
-+++
-|[[schedule]]`schedule`|`Number (int)`|
-+++
-Set the metric collection interval (in seconds). Defaults to <code>1</code>.
-+++
-|===
-
-[[MetricsOptionsBase]]
-== MetricsOptionsBase
-
-++++
- Base options for metrics reporting.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
-+++
-Sets metrics types that are disabled.
-+++
-|[[enabled]]`enabled`|`Boolean`|
-+++
-Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
-+++
-|===
-
-[[VertxInfluxDbOptions]]
-== VertxInfluxDbOptions
+[[InfluxDbOptions]]
+== InfluxDbOptions
 
 ++++
  Vert.x InfluxDb monitoring configuration.
@@ -115,88 +38,29 @@ Set whether metrics will be enabled on the Vert.x instance. Metrics are not enab
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[authenticationOptions]]`authenticationOptions`|`link:dataobjects.html#AuthenticationOptions[AuthenticationOptions]`|
-+++
-Set the options for authentication.
-+++
-|[[batchDelay]]`batchDelay`|`Number (int)`|
-+++
-Set the maximum delay between two consecutive batches (in seconds). To reduce the number of HTTP exchanges, metric
- data is sent by the reporter in batches. A batch is sent as soon as the number of metrics collected reaches
- the configured <code>batchSize</code>, or after the <code>batchDelay</code> expires. Defaults to <code>1</code> second.
-+++
-|[[batchSize]]`batchSize`|`Number (int)`|
-+++
-Set the maximum number of metrics in a batch. To reduce the number of HTTP exchanges, metric data is sent by the
- reporter in batches. A batch is sent as soon as the number of metrics collected reaches the configured
- <code>batchSize</code>, or after the <code>batchDelay</code> expires. Defaults to <code>50</code>.
-+++
-|[[database]]`database`|`String`|
-+++
-Set the InfluxDb database. Defaults to <code>default</code>.
-+++
-|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
-+++
-Sets metrics types that are disabled.
-+++
+|[[batchSize]]`batchSize`|`Number (int)`|-
+|[[compressed]]`compressed`|`Boolean`|-
+|[[connectTimeout]]`connectTimeout`|`Number (int)`|-
+|[[db]]`db`|`String`|-
 |[[enabled]]`enabled`|`Boolean`|
 +++
-Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
+Set whether backend will be enabled on the Vert.x instance.
 +++
-|[[gzipEnabled]]`gzipEnabled`|`Boolean`|-
-|[[host]]`host`|`String`|
-+++
-Set the InfluxDb Metrics service host. Defaults to <code>localhost</code>.
-+++
-|[[httpHeaders]]`httpHeaders`|`Json object`|
-+++
-Set specific headers to include in HTTP requests.
-+++
-|[[httpOptions]]`httpOptions`|`link:dataobjects.html#HttpClientOptions[HttpClientOptions]`|
-+++
-Set the configuration of the InfluxDb Metrics HTTP client.
-+++
-|[[measurement]]`measurement`|`String`|
-+++
-Set the InfluxDb measurement. Defaults to <code>vert.x</code>.
-+++
-|[[metricsBridgeAddress]]`metricsBridgeAddress`|`String`|
-+++
-Sets the metric bridge address on which the application is sending the custom metrics. Application can send
- metrics to this event bus address. The message is a JSON object specifying at least the <code>id</code> and
- <code>value</code> fields.
- <p/>
- Don't forget to also enable the bridge with <code>metricsBridgeEnabled</code>.
-+++
-|[[metricsBridgeEnabled]]`metricsBridgeEnabled`|`Boolean`|
-+++
-Sets whether or not the metrics bridge should be enabled. The metrics bridge is disabled by default.
-+++
-|[[metricsServiceUri]]`metricsServiceUri`|`String`|
-+++
-Set the InfluxDb Metrics service URI. Defaults to <code>/InfluxDb/metrics</code>. This can be useful if you host the
- InfluxDb server behind a proxy and manipulate the default service URI.
-+++
-|[[port]]`port`|`Number (int)`|
-+++
-Set the InfluxDb Metrics service port.  Defaults to <code>8080</code>.
-+++
-|[[prefix]]`prefix`|`String`|
-+++
-Set the metric name prefix. Metric names are not prefixed by default. Prefixing metric names is required to
- distinguish data sent by different Vert.x instances.
-+++
-|[[schedule]]`schedule`|`Number (int)`|
-+++
-Set the metric collection interval (in seconds). Defaults to <code>1</code>.
-+++
+|[[numThreads]]`numThreads`|`Number (int)`|-
+|[[password]]`password`|`String`|-
+|[[prefix]]`prefix`|`String`|-
+|[[readTimeout]]`readTimeout`|`Number (int)`|-
+|[[retentionPolicy]]`retentionPolicy`|`String`|-
+|[[step]]`step`|`Number (int)`|-
+|[[uri]]`uri`|`String`|-
+|[[userName]]`userName`|`String`|-
 |===
 
-[[VertxPrometheusOptions]]
-== VertxPrometheusOptions
+[[MonitoringBackendOptions]]
+== MonitoringBackendOptions
 
 ++++
- Vert.x Prometheus monitoring configuration.
+ Options for monitoring backend.
 ++++
 '''
 
@@ -204,10 +68,24 @@ Set the metric collection interval (in seconds). Defaults to <code>1</code>.
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
+|[[enabled]]`enabled`|`Boolean`|
 +++
-Sets metrics types that are disabled.
+Set whether backend will be enabled on the Vert.x instance.
 +++
+|===
+
+[[PrometheusOptions]]
+== PrometheusOptions
+
+++++
+ Options for Prometheus metrics backend.
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
 |[[embeddedServerEndpoint]]`embeddedServerEndpoint`|`String`|
 +++
 Set metrics endpoint. Use conjointly with the embedded server options.
@@ -215,6 +93,29 @@ Set metrics endpoint. Use conjointly with the embedded server options.
 |[[embeddedServerOptions]]`embeddedServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|
 +++
 An embedded server will start to expose metrics with Prometheus format
++++
+|[[enabled]]`enabled`|`Boolean`|
++++
+Set whether backend will be enabled on the Vert.x instance.
++++
+|===
+
+[[VertxMonitoringOptions]]
+== VertxMonitoringOptions
+
+++++
+ Vert.x monitoring configuration.
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[backendOptions]]`backendOptions`|`link:dataobjects.html#MonitoringBackendOptions[MonitoringBackendOptions]`|-
+|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
++++
+Sets metrics types that are disabled.
 +++
 |[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
 +++

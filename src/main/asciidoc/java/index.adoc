@@ -4,5 +4,5 @@ This project is an implementation of the Vert.x Metrics Service Provider Interfa
 
 Available reporters:
 
-* link:influxdb.adoc[InfluxDB]
+* link:influx.adoc[InfluxDB]
 * link:prometheus.adoc[Prometheus]

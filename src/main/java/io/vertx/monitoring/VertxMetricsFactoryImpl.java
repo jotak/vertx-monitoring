@@ -20,10 +20,6 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.metrics.MetricsOptions;
 import io.vertx.core.spi.VertxMetricsFactory;
 import io.vertx.core.spi.metrics.VertxMetrics;
-import io.vertx.monitoring.influxdb.VertxInfluxDbOptions;
-import io.vertx.monitoring.influxdb.impl.InfluxDbVertxMetrics;
-import io.vertx.monitoring.prometheus.VertxPrometheusOptions;
-import io.vertx.monitoring.prometheus.impl.PrometheusVertxMetrics;
 
 /**
  * @author Joel Takvorian
@@ -32,23 +28,15 @@ public class VertxMetricsFactoryImpl implements VertxMetricsFactory {
   @Override
   public VertxMetrics metrics(Vertx vertx, VertxOptions vertxOptions) {
     MetricsOptions metricsOptions = vertxOptions.getMetricsOptions();
-    if (metricsOptions instanceof VertxInfluxDbOptions) {
-      return new InfluxDbVertxMetrics(vertx, (VertxInfluxDbOptions) metricsOptions);
-    } else if (metricsOptions instanceof VertxPrometheusOptions) {
-      return new PrometheusVertxMetrics(vertx, (VertxPrometheusOptions) metricsOptions);
+    if (metricsOptions instanceof VertxMonitoringOptions) {
+      return new VertxMonitoring(vertx, (VertxMonitoringOptions) metricsOptions);
     } else {
-      return new InfluxDbVertxMetrics(vertx, new VertxInfluxDbOptions(metricsOptions.toJson()));
+      return new VertxMonitoring(vertx, new VertxMonitoringOptions(metricsOptions.toJson()));
     }
   }
 
   @Override
   public MetricsOptions newOptions() {
-    // Tricky hack to guess if we're expecting Prometheus options or Influx
-    try {
-      Class.forName("io.prometheus.client.CollectorRegistry");
-      return new VertxPrometheusOptions();
-    } catch (ClassNotFoundException e) {
-      return new VertxInfluxDbOptions();
-    }
+    return new VertxMonitoringOptions();
   }
 }
