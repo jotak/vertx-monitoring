@@ -12,6 +12,7 @@ import io.vertx.monitoring.collector.DummyVertxMetrics;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import io.vertx.monitoring.collector.DummyVertxMetricsFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,8 +46,10 @@ public class HttpClientServerTest {
 
   @Before
   public void setUp(TestContext ctx) {
-    vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new BatchingReporterOptions()
-      .setEnabled(true)))
+    vertx = Vertx.vertx(new VertxOptions()
+      .setMetricsOptions(new BatchingReporterOptions()
+        .setEnabled(true)
+        .setFactory(new DummyVertxMetricsFactory())))
       .exceptionHandler(ctx.exceptionHandler());
     // Setup server
     Async serverReady = ctx.async();

@@ -9,6 +9,7 @@ import io.vertx.monitoring.collector.DummyVertxMetrics;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import io.vertx.monitoring.collector.DummyVertxMetricsFactory;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,9 +76,10 @@ public class NamedPoolTest {
       },
       context::fail);
 
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
-      new BatchingReporterOptions()
-        .setEnabled(true)))
+    Vertx vertx = Vertx.vertx(new VertxOptions()
+      .setMetricsOptions(new BatchingReporterOptions()
+        .setEnabled(true)
+        .setFactory(new DummyVertxMetricsFactory())))
       .exceptionHandler(context.exceptionHandler());
 
     // Setup executor

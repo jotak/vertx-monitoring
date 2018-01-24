@@ -12,6 +12,7 @@ import io.vertx.monitoring.collector.DummyVertxMetrics;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import io.vertx.monitoring.collector.DummyVertxMetricsFactory;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,7 +76,10 @@ public class EventBusTest {
       context::fail);
 
     Async ebReady = context.async(instances);
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new BatchingReporterOptions().setEnabled(true)));
+    Vertx vertx = Vertx.vertx(new VertxOptions()
+      .setMetricsOptions(new BatchingReporterOptions()
+        .setEnabled(true)
+        .setFactory(new DummyVertxMetricsFactory())));
     // Setup eventbus handler
     vertx.deployVerticle(() -> new AbstractVerticle() {
       @Override

@@ -9,6 +9,7 @@ import io.vertx.monitoring.collector.DummyVertxMetrics;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import io.vertx.monitoring.collector.DummyVertxMetricsFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,7 +42,8 @@ public class VerticleTest {
       },
       context::fail);
 
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new BatchingReporterOptions().setEnabled(true)))
+    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
+      new BatchingReporterOptions().setEnabled(true).setFactory(new DummyVertxMetricsFactory())))
       .exceptionHandler(context.exceptionHandler());
     AtomicReference<String> deploymentRef = new AtomicReference<>();
     vertx.deployVerticle(SampleVerticle::new, new DeploymentOptions().setInstances(3), res -> {
