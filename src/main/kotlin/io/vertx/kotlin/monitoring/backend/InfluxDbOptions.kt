@@ -1,28 +1,28 @@
 package io.vertx.kotlin.monitoring.backend
 
-import io.vertx.monitoring.backend.InfluxDbOptions
+import io.vertx.monitoring.backend.VertxInfluxDbOptions
 
 /**
- * A function providing a DSL for building [io.vertx.monitoring.backend.InfluxDbOptions] objects.
+ * A function providing a DSL for building [io.vertx.monitoring.backend.VertxInfluxDbOptions] objects.
  *
  * Vert.x InfluxDb monitoring configuration.
  *
- * @param batchSize 
- * @param compressed 
- * @param connectTimeout 
- * @param db 
+ * @param batchSize
+ * @param compressed
+ * @param connectTimeout
+ * @param db
  * @param enabled  Set whether backend will be enabled on the Vert.x instance.
- * @param numThreads 
- * @param password 
- * @param prefix 
- * @param readTimeout 
- * @param retentionPolicy 
- * @param step 
- * @param uri 
- * @param userName 
+ * @param numThreads
+ * @param password
+ * @param prefix
+ * @param readTimeout
+ * @param retentionPolicy
+ * @param step
+ * @param uri
+ * @param userName
  *
  * <p/>
- * NOTE: This function has been automatically generated from the [io.vertx.monitoring.backend.InfluxDbOptions original] using Vert.x codegen.
+ * NOTE: This function has been automatically generated from the [io.vertx.monitoring.backend.VertxInfluxDbOptions original] using Vert.x codegen.
  */
 fun InfluxDbOptions(
   batchSize: Int? = null,
@@ -37,7 +37,7 @@ fun InfluxDbOptions(
   retentionPolicy: String? = null,
   step: Int? = null,
   uri: String? = null,
-  userName: String? = null): InfluxDbOptions = io.vertx.monitoring.backend.InfluxDbOptions().apply {
+  userName: String? = null): VertxInfluxDbOptions = VertxInfluxDbOptions().apply {
 
   if (batchSize != null) {
     this.setBatchSize(batchSize)

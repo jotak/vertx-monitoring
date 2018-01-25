@@ -36,29 +36,29 @@ class VertxNetServerMetrics {
   final boolean hasRemoteLabel;
 
   VertxNetServerMetrics(VertxMonitoringOptions options, MeterRegistry registry) {
-    this(options, registry, "vertx_net");
+    this(options, registry, "vertx.net");
   }
 
   VertxNetServerMetrics(VertxMonitoringOptions options, MeterRegistry registry, String prefix) {
     if (options.isEnableRemoteLabelForServers()) {
       hasRemoteLabel = true;
-      connections = Gauges.longGauges(prefix + "_server_connections", "Number of opened connections to the server",
+      connections = Gauges.longGauges(prefix + ".server.connections", "Number of opened connections to the server",
         registry, Labels.LOCAL, Labels.REMOTE);
-      bytesReceived = new Summaries(prefix + "_server_bytes_received", "Number of bytes received by the server",
+      bytesReceived = new Summaries(prefix + ".server.bytesReceived", "Number of bytes received by the server",
         registry, Labels.LOCAL, Labels.REMOTE);
-      bytesSent = new Summaries(prefix + "_server_bytes_sent", "Number of bytes sent by the server",
+      bytesSent = new Summaries(prefix + ".server.bytesSent", "Number of bytes sent by the server",
         registry, Labels.LOCAL, Labels.REMOTE);
-      errorCount = new Counters(prefix + "_server_errors", "Number of errors",
+      errorCount = new Counters(prefix + ".server.errors", "Number of errors",
         registry, Labels.LOCAL, Labels.REMOTE, Labels.CLASS);
     } else {
       hasRemoteLabel = false;
-      connections = Gauges.longGauges(prefix + "_server_connections", "Number of opened connections to the server",
+      connections = Gauges.longGauges(prefix + ".server.connections", "Number of opened connections to the server",
         registry, Labels.LOCAL);
-      bytesReceived = new Summaries(prefix + "_server_bytes_received", "Number of bytes received by the server",
+      bytesReceived = new Summaries(prefix + ".server.bytesReceived", "Number of bytes received by the server",
         registry, Labels.LOCAL);
-      bytesSent = new Summaries(prefix + "_server_bytes_sent", "Number of bytes sent by the server",
+      bytesSent = new Summaries(prefix + ".server.bytesSent", "Number of bytes sent by the server",
         registry, Labels.LOCAL);
-      errorCount = new Counters(prefix + "_server_errors", "Number of errors",
+      errorCount = new Counters(prefix + ".server.errors", "Number of errors",
         registry, Labels.LOCAL, Labels.CLASS);
     }
   }

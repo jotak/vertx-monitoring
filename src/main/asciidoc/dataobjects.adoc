@@ -1,33 +1,7 @@
 = Cheatsheets
 
-[[AuthenticationOptions]]
-== AuthenticationOptions
-
-++++
- Authentication options.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[enabled]]`enabled`|`Boolean`|
-+++
-Set whether authentication is enabled. Defaults to <code>false</code>.
-+++
-|[[secret]]`secret`|`String`|
-+++
-Set the secret used for authentication.
-+++
-|[[username]]`username`|`String`|
-+++
-Set the identifier used for authentication.
-+++
-|===
-
-[[InfluxDbOptions]]
-== InfluxDbOptions
+[[VertxInfluxDbOptions]]
+== VertxInfluxDbOptions
 
 ++++
  Vert.x InfluxDb monitoring configuration.
@@ -42,62 +16,43 @@ Set the identifier used for authentication.
 |[[compressed]]`compressed`|`Boolean`|-
 |[[connectTimeout]]`connectTimeout`|`Number (int)`|-
 |[[db]]`db`|`String`|-
+|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
++++
+Sets metrics types that are disabled.
++++
+|[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
++++
+Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
+ This is relevant when the application makes client connections to a large number of different clients,
+ in order to reduce the number of related prometheus metrics created.<br/>
+ This option is set to <i>true</i> by default.
++++
+|[[enableRemoteLabelForServers]]`enableRemoteLabelForServers`|`Boolean`|
++++
+Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
+ This is relevant when the number of clients connecting to the application servers is small and under control,
+ in order to reduce the number of related prometheus metrics created.<br/>
+ This option is set to <i>false</i> by default.
++++
 |[[enabled]]`enabled`|`Boolean`|
 +++
-Set whether backend will be enabled on the Vert.x instance.
+Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
 +++
 |[[numThreads]]`numThreads`|`Number (int)`|-
 |[[password]]`password`|`String`|-
 |[[prefix]]`prefix`|`String`|-
 |[[readTimeout]]`readTimeout`|`Number (int)`|-
+|[[registryName]]`registryName`|`String`|
++++
+Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
+ To retrieve this registry later, call <code>PrometheusRegistries.get(String)</code>
+ Doing so allows to provide application-defined metrics to the same registry.
+ If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
++++
 |[[retentionPolicy]]`retentionPolicy`|`String`|-
 |[[step]]`step`|`Number (int)`|-
 |[[uri]]`uri`|`String`|-
 |[[userName]]`userName`|`String`|-
-|===
-
-[[MonitoringBackendOptions]]
-== MonitoringBackendOptions
-
-++++
- Options for monitoring backend.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[enabled]]`enabled`|`Boolean`|
-+++
-Set whether backend will be enabled on the Vert.x instance.
-+++
-|===
-
-[[PrometheusOptions]]
-== PrometheusOptions
-
-++++
- Options for Prometheus metrics backend.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[embeddedServerEndpoint]]`embeddedServerEndpoint`|`String`|
-+++
-Set metrics endpoint. Use conjointly with the embedded server options.
-+++
-|[[embeddedServerOptions]]`embeddedServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|
-+++
-An embedded server will start to expose metrics with Prometheus format
-+++
-|[[enabled]]`enabled`|`Boolean`|
-+++
-Set whether backend will be enabled on the Vert.x instance.
-+++
 |===
 
 [[VertxMonitoringOptions]]
@@ -112,10 +67,60 @@ Set whether backend will be enabled on the Vert.x instance.
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[backendOptions]]`backendOptions`|`link:dataobjects.html#MonitoringBackendOptions[MonitoringBackendOptions]`|-
 |[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
 +++
 Sets metrics types that are disabled.
++++
+|[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
++++
+Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
+ This is relevant when the application makes client connections to a large number of different clients,
+ in order to reduce the number of related prometheus metrics created.<br/>
+ This option is set to <i>true</i> by default.
++++
+|[[enableRemoteLabelForServers]]`enableRemoteLabelForServers`|`Boolean`|
++++
+Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
+ This is relevant when the number of clients connecting to the application servers is small and under control,
+ in order to reduce the number of related prometheus metrics created.<br/>
+ This option is set to <i>false</i> by default.
++++
+|[[enabled]]`enabled`|`Boolean`|
++++
+Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
++++
+|[[registryName]]`registryName`|`String`|
++++
+Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
+ To retrieve this registry later, call <code>PrometheusRegistries.get(String)</code>
+ Doing so allows to provide application-defined metrics to the same registry.
+ If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
++++
+|===
+
+[[VertxPrometheusOptions]]
+== VertxPrometheusOptions
+
+++++
+ Options for Prometheus metrics backend.
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
++++
+Sets metrics types that are disabled.
++++
+|[[embeddedServerEndpoint]]`embeddedServerEndpoint`|`String`|
++++
+Set metrics endpoint. Use conjointly with the embedded server options.
++++
+|[[embeddedServerOptions]]`embeddedServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|
++++
+An embedded server will start to expose metrics with Prometheus format
 +++
 |[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
 +++

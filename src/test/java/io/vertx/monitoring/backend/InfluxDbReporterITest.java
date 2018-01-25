@@ -14,7 +14,7 @@
  * You may elect to redistribute this code under either of these licenses.
  */
 
-package io.vertx.monitoring.influxdb;
+package io.vertx.monitoring.backend;
 
 
 import io.vertx.core.Vertx;
@@ -24,8 +24,6 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
-import io.vertx.monitoring.VertxMonitoringOptions;
-import io.vertx.monitoring.backend.InfluxDbOptions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,11 +39,7 @@ public class InfluxDbReporterITest {
   @Before
   public void setUp(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxMonitoringOptions()
-        .setBackendOptions(new InfluxDbOptions()
-          .setStep(1)
-          .setEnabled(true))
-        .setEnabled(true)));
+      .setMetricsOptions(new VertxInfluxDbOptions().setStep(1).setRegistryName("influx").setEnabled(true)));
   }
 
   @After

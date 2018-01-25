@@ -64,9 +64,8 @@ public class VertxMonitoring extends DummyVertxMetrics {
    * @param options Vertx Prometheus options
    */
   public VertxMonitoring(Vertx vertx, VertxMonitoringOptions options) {
-
     registryName = options.getRegistryName();
-    this.backendRegistry = BackendRegistries.setupBackend(vertx, registryName, options.getBackendOptions());
+    this.backendRegistry = BackendRegistries.setupBackend(vertx, options);
     MeterRegistry registry = backendRegistry.getMeterRegistry();
 
     eventBusMetrics = options.isMetricsCategoryDisabled(EVENT_BUS) ? Optional.empty()

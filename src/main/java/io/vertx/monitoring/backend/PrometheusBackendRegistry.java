@@ -31,10 +31,10 @@ import io.vertx.ext.web.Router;
 public final class PrometheusBackendRegistry implements BackendRegistry {
   private final PrometheusMeterRegistry registry;
   private final Vertx vertx;
-  private final PrometheusOptions options;
+  private final VertxPrometheusOptions options;
   private HttpServer server;
 
-  public PrometheusBackendRegistry(Vertx vertx, PrometheusOptions options) {
+  public PrometheusBackendRegistry(Vertx vertx, VertxPrometheusOptions options) {
     this.vertx = vertx;
     this.options = options;
     registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);

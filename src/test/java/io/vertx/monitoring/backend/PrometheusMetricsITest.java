@@ -14,7 +14,7 @@
  * You may elect to redistribute this code under either of these licenses.
  */
 
-package io.vertx.monitoring.prometheus;
+package io.vertx.monitoring.backend;
 
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.vertx.core.Vertx;
@@ -27,8 +27,6 @@ import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.Router;
 import io.vertx.monitoring.MetricsCategory;
 import io.vertx.monitoring.VertxMonitoringOptions;
-import io.vertx.monitoring.backend.BackendRegistries;
-import io.vertx.monitoring.backend.PrometheusOptions;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,11 +46,9 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldStartEmbeddedServer(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxMonitoringOptions()
-        .setBackendOptions(new PrometheusOptions()
+      .setMetricsOptions(new VertxPrometheusOptions()
           .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))
-          .setEnabled(true))
-        .setEnabled(true)));
+          .setEnabled(true)));
 
     Async async = context.async();
     HttpClientRequest req = vertx.createHttpClient()
@@ -71,9 +67,7 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldBindExistingServer(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxMonitoringOptions()
-        .setBackendOptions(new PrometheusOptions().setEnabled(true))
-        .setEnabled(true)));
+      .setMetricsOptions(new VertxPrometheusOptions().setEnabled(true)));
 
     Router router = Router.router(vertx);
     router.route("/custom").handler(routingContext -> {
@@ -101,12 +95,10 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldExcludeCategory(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxMonitoringOptions()
-        .setBackendOptions(new PrometheusOptions()
+      .setMetricsOptions(new VertxPrometheusOptions()
           .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))
-          .setEnabled(true))
-        .addDisabledMetricsCategory(MetricsCategory.HTTP_SERVER)
-        .setEnabled(true)));
+          .addDisabledMetricsCategory(MetricsCategory.HTTP_SERVER)
+          .setEnabled(true)));
 
     Async async = context.async();
     HttpClientRequest req = vertx.createHttpClient()
@@ -126,11 +118,9 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldExposeEventBusMetrics(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxMonitoringOptions()
-        .setBackendOptions(new PrometheusOptions()
+      .setMetricsOptions(new VertxPrometheusOptions()
           .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))
-          .setEnabled(true))
-        .setEnabled(true)));
+          .setEnabled(true)));
 
     // Send something on the eventbus and wait til it's received
     Async asyncEB = context.async();
@@ -147,11 +137,11 @@ public class PrometheusMetricsITest {
         res.bodyHandler(body -> {
           String str = body.toString();
           context.verify(v -> assertThat(str)
-            .contains("vertx_eventbus_published_total{address=\"test-eb\",side=\"local\",} 1.0")
-            .contains("vertx_eventbus_received_total{address=\"test-eb\",side=\"local\",} 1.0")
-            .contains("vertx_eventbus_handlers{address=\"test-eb\",} 1.0")
-            .contains("vertx_eventbus_delivered_total{address=\"test-eb\",side=\"local\",} 1.0")
-            .contains("vertx_eventbus_processing_time_duration_seconds_count{address=\"test-eb\",} 1.0"));
+            .contains("vertx_eventbus_published_total{address=\"test-eb\",side=\"local\",} 1.0",
+              "vertx_eventbus_received_total{address=\"test-eb\",side=\"local\",} 1.0",
+              "vertx_eventbus_handlers{address=\"test-eb\",} 1.0",
+              "vertx_eventbus_delivered_total{address=\"test-eb\",side=\"local\",} 1.0",
+              "vertx_eventbus_processingTime_duration_seconds_count{address=\"test-eb\",} 1.0"));
           async.complete();
         });
       });

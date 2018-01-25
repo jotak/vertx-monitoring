@@ -19,6 +19,7 @@ package io.vertx.monitoring.backend;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
+import io.vertx.monitoring.VertxMonitoringOptions;
 
 /**
  * Options for Prometheus metrics backend.
@@ -26,7 +27,7 @@ import io.vertx.core.json.JsonObject;
  * @author Joel Takvorian
  */
 @DataObject(generateConverter = true, inheritConverter = true)
-public class PrometheusOptions extends MonitoringBackendOptions {
+public class VertxPrometheusOptions extends VertxMonitoringOptions {
 
   /**
    * The default metrics endpoint = /metrics when using an embedded server.
@@ -39,7 +40,7 @@ public class PrometheusOptions extends MonitoringBackendOptions {
   /**
    * Default constructor
    */
-  public PrometheusOptions() {
+  public VertxPrometheusOptions() {
     super();
     embeddedServerEndpoint = DEFAULT_EMBEDDED_SERVER_ENDPOINT;
   }
@@ -47,9 +48,9 @@ public class PrometheusOptions extends MonitoringBackendOptions {
   /**
    * Copy constructor
    *
-   * @param other The other {@link PrometheusOptions} to copy when creating this
+   * @param other The other {@link VertxPrometheusOptions} to copy when creating this
    */
-  public PrometheusOptions(PrometheusOptions other) {
+  public VertxPrometheusOptions(VertxPrometheusOptions other) {
     super(other);
     embeddedServerEndpoint = other.embeddedServerEndpoint != null ? other.embeddedServerEndpoint : DEFAULT_EMBEDDED_SERVER_ENDPOINT;
     if (other.embeddedServerOptions != null) {
@@ -62,13 +63,13 @@ public class PrometheusOptions extends MonitoringBackendOptions {
    *
    * @param json the JsonObject to create it from
    */
-  public PrometheusOptions(JsonObject json) {
+  public VertxPrometheusOptions(JsonObject json) {
     this();
-    PrometheusOptionsConverter.fromJson(json, this);
+    VertxPrometheusOptionsConverter.fromJson(json, this);
   }
 
   @Override
-  public PrometheusOptions setEnabled(boolean enable) {
+  public VertxPrometheusOptions setEnabled(boolean enable) {
     super.setEnabled(enable);
     return this;
   }
@@ -81,7 +82,7 @@ public class PrometheusOptions extends MonitoringBackendOptions {
    * An embedded server will start to expose metrics with Prometheus format
    * @param embeddedServerOptions the server options
    */
-  public PrometheusOptions setEmbeddedServerOptions(HttpServerOptions embeddedServerOptions) {
+  public VertxPrometheusOptions setEmbeddedServerOptions(HttpServerOptions embeddedServerOptions) {
     this.embeddedServerOptions = embeddedServerOptions;
     return this;
   }
@@ -90,7 +91,7 @@ public class PrometheusOptions extends MonitoringBackendOptions {
    * Set metrics endpoint. Use conjointly with the embedded server options.
    * @param embeddedServerEndpoint metrics endpoint
    */
-  public PrometheusOptions setEmbeddedServerEndpoint(String embeddedServerEndpoint) {
+  public VertxPrometheusOptions setEmbeddedServerEndpoint(String embeddedServerEndpoint) {
     this.embeddedServerEndpoint = embeddedServerEndpoint;
     return this;
   }

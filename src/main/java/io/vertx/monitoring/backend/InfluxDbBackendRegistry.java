@@ -26,7 +26,7 @@ import io.vertx.core.eventbus.EventBus;
 public final class InfluxDbBackendRegistry implements BackendRegistry {
   private final InfluxMeterRegistry registry;
 
-  public InfluxDbBackendRegistry(InfluxDbOptions options) {
+  public InfluxDbBackendRegistry(VertxInfluxDbOptions options) {
     registry = new InfluxMeterRegistry(options);
   }
 

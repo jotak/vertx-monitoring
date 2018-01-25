@@ -14,19 +14,19 @@
  * under the License.
  */
 
-package io.vertx.monitoring;
+package io.vertx.monitoring.backend;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 /**
- * Converter for {@link io.vertx.monitoring.VertxMonitoringOptions}.
+ * Converter for {@link io.vertx.monitoring.backend.VertxPrometheusOptions}.
  *
- * NOTE: This class has been automatically generated from the {@link io.vertx.monitoring.VertxMonitoringOptions} original class using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.monitoring.backend.VertxPrometheusOptions} original class using Vert.x codegen.
  */
-public class VertxMonitoringOptionsConverter {
+public class VertxPrometheusOptionsConverter {
 
-  public static void fromJson(JsonObject json, VertxMonitoringOptions obj) {
+  public static void fromJson(JsonObject json, VertxPrometheusOptions obj) {
     if (json.getValue("disabledMetricsCategories") instanceof JsonArray) {
       java.util.LinkedHashSet<io.vertx.monitoring.MetricsCategory> list = new java.util.LinkedHashSet<>();
       json.getJsonArray("disabledMetricsCategories").forEach( item -> {
@@ -34,6 +34,12 @@ public class VertxMonitoringOptionsConverter {
           list.add(io.vertx.monitoring.MetricsCategory.valueOf((String)item));
       });
       obj.setDisabledMetricsCategories(list);
+    }
+    if (json.getValue("embeddedServerEndpoint") instanceof String) {
+      obj.setEmbeddedServerEndpoint((String)json.getValue("embeddedServerEndpoint"));
+    }
+    if (json.getValue("embeddedServerOptions") instanceof JsonObject) {
+      obj.setEmbeddedServerOptions(new io.vertx.core.http.HttpServerOptions((JsonObject)json.getValue("embeddedServerOptions")));
     }
     if (json.getValue("enableRemoteLabelForClients") instanceof Boolean) {
       obj.setEnableRemoteLabelForClients((Boolean)json.getValue("enableRemoteLabelForClients"));
@@ -49,11 +55,17 @@ public class VertxMonitoringOptionsConverter {
     }
   }
 
-  public static void toJson(VertxMonitoringOptions obj, JsonObject json) {
+  public static void toJson(VertxPrometheusOptions obj, JsonObject json) {
     if (obj.getDisabledMetricsCategories() != null) {
       JsonArray array = new JsonArray();
       obj.getDisabledMetricsCategories().forEach(item -> array.add(item.name()));
       json.put("disabledMetricsCategories", array);
+    }
+    if (obj.getEmbeddedServerEndpoint() != null) {
+      json.put("embeddedServerEndpoint", obj.getEmbeddedServerEndpoint());
+    }
+    if (obj.getEmbeddedServerOptions() != null) {
+      json.put("embeddedServerOptions", obj.getEmbeddedServerOptions().toJson());
     }
     json.put("enableRemoteLabelForClients", obj.isEnableRemoteLabelForClients());
     json.put("enableRemoteLabelForServers", obj.isEnableRemoteLabelForServers());

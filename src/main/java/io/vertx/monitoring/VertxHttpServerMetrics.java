@@ -39,28 +39,28 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
   private final Gauges<LongAdder> wsConnections;
 
   VertxHttpServerMetrics(VertxMonitoringOptions options, MeterRegistry registry) {
-    super(options, registry, "vertx_http");
+    super(options, registry, "vertx.http");
     if (hasRemoteLabel) {
-      requests = Gauges.longGauges("vertx_http_server_requests", "Number of requests being processed",
+      requests = Gauges.longGauges("vertx.http.server.requests", "Number of requests being processed",
         registry, Labels.LOCAL, Labels.REMOTE);
-      requestCount = new Counters("vertx_http_server_request_count", "Number of processed requests",
+      requestCount = new Counters("vertx.http.server.requestCount", "Number of processed requests",
         registry, Labels.LOCAL, Labels.REMOTE, Labels.METHOD, Labels.CODE);
-      requestResetCount = new Counters("vertx_http_server_request_reset_count", "Number of requests reset",
+      requestResetCount = new Counters("vertx.http.server.requestResetCount", "Number of requests reset",
         registry, Labels.LOCAL, Labels.REMOTE);
-      processingTime = new Timers("vertx_http_server_reponse_time", "Request processing time",
+      processingTime = new Timers("vertx.http.server.responseTime", "Request processing time",
         registry, Labels.LOCAL, Labels.REMOTE);
-      wsConnections = Gauges.longGauges("vertx_http_server_ws_connections", "Number of websockets currently opened",
+      wsConnections = Gauges.longGauges("vertx.http.server.wsConnections", "Number of websockets currently opened",
         registry, Labels.LOCAL, Labels.REMOTE);
     } else {
-      requests = Gauges.longGauges("vertx_http_server_requests", "Number of requests being processed",
+      requests = Gauges.longGauges("vertx.http.server.requests", "Number of requests being processed",
         registry, Labels.LOCAL);
-      requestCount = new Counters("vertx_http_server_request_count", "Number of processed requests",
+      requestCount = new Counters("vertx.http.server.requestCount", "Number of processed requests",
         registry, Labels.LOCAL, Labels.METHOD, Labels.CODE);
-      requestResetCount = new Counters("vertx_http_server_request_reset_count", "Number of requests reset",
+      requestResetCount = new Counters("vertx.http.server.requestResetCount", "Number of requests reset",
         registry, Labels.LOCAL);
-      processingTime = new Timers("vertx_http_server_reponse_time", "Request processing time",
+      processingTime = new Timers("vertx.http.server.responseTime", "Request processing time",
         registry, Labels.LOCAL);
-      wsConnections = Gauges.longGauges("vertx_http_server_ws_connections", "Number of websockets currently opened",
+      wsConnections = Gauges.longGauges("vertx.http.server.wsConnections", "Number of websockets currently opened",
         registry, Labels.LOCAL);
     }
   }

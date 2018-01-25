@@ -37,18 +37,18 @@ class VertxPoolMetrics {
   private final Counters completed;
 
   VertxPoolMetrics(MeterRegistry registry) {
-    queueDelay = new Timers("vertx_pool_queue_delay", "Queue time for a resource",
-      registry, "pool_type", "pool_name");
-    queueSize = Gauges.longGauges("vertx_pool_queue_size", "Number of elements waiting for a resource",
-      registry, "pool_type", "pool_name");
-    usage = new Timers("vertx_pool_usage", "Time using a resource",
-      registry, "pool_type", "pool_name");
-    inUse = Gauges.longGauges("vertx_pool_in_use", "Number of resources used",
-      registry, "pool_type", "pool_name");
-    usageRatio = Gauges.doubleGauges("vertx_pool_ratio", "Pool usage ratio, only present if maximum pool size could be determined",
-      registry, "pool_type", "pool_name", "max_pool_size");
-    completed = new Counters("vertx_pool_completed", "Number of elements done with the resource",
-      registry, "pool_type", "pool_name");
+    queueDelay = new Timers("vertx.pool.queue.delay", "Queue time for a resource",
+      registry, "pool.type", "pool.name");
+    queueSize = Gauges.longGauges("vertx.pool.queue.size", "Number of elements waiting for a resource",
+      registry, "pool.type", "pool.name");
+    usage = new Timers("vertx.pool.usage", "Time using a resource",
+      registry, "pool.type", "pool.name");
+    inUse = Gauges.longGauges("vertx.pool.inUse", "Number of resources used",
+      registry, "pool.type", "pool.name");
+    usageRatio = Gauges.doubleGauges("vertx.pool.ratio", "Pool usage ratio, only present if maximum pool size could be determined",
+      registry, "pool.type", "pool.name");
+    completed = new Counters("vertx.pool.completed", "Number of elements done with the resource",
+      registry, "pool.type", "pool.name");
   }
 
   PoolMetrics forInstance(String poolType, String poolName, int maxPoolSize) {
@@ -108,7 +108,7 @@ class VertxPoolMetrics {
 
     private void checkRatio(long inUse) {
       if (maxPoolSize > 0) {
-        usageRatio.get(poolType, poolName, String.valueOf(maxPoolSize))
+        usageRatio.get(poolType, poolName)
           .set((double)inUse / maxPoolSize);
       }
     }

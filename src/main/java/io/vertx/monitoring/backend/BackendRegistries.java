@@ -18,6 +18,7 @@ package io.vertx.monitoring.backend;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.vertx.core.Vertx;
+import io.vertx.monitoring.VertxMonitoringOptions;
 
 import java.util.Map;
 import java.util.Optional;
@@ -32,20 +33,15 @@ public final class BackendRegistries {
   private BackendRegistries() {
   }
 
-  public static BackendRegistry setupBackend(Vertx vertx, String registryName, MonitoringBackendOptions options) {
-    return REGISTRIES.computeIfAbsent(registryName, k -> {
+  public static BackendRegistry setupBackend(Vertx vertx, VertxMonitoringOptions options) {
+    return REGISTRIES.computeIfAbsent(options.getRegistryName(), k -> {
       final BackendRegistry reg;
-      if (options != null && options.isEnabled()) {
-        if (options instanceof InfluxDbOptions) {
-          reg = new InfluxDbBackendRegistry((InfluxDbOptions) options);
-        } else if (options instanceof PrometheusOptions) {
-          reg = new PrometheusBackendRegistry(vertx, (PrometheusOptions) options);
-        } else {
-          // Unknown backend setup, use global registry
-          reg = NoopBackendRegistry.INSTANCE;
-        }
+      if (options instanceof VertxInfluxDbOptions) {
+        reg = new InfluxDbBackendRegistry((VertxInfluxDbOptions) options);
+      } else if (options instanceof VertxPrometheusOptions) {
+        reg = new PrometheusBackendRegistry(vertx, (VertxPrometheusOptions) options);
       } else {
-        // No backend setup, use global registry
+        // Unknown/no backend setup, use global registry
         reg = NoopBackendRegistry.INSTANCE;
       }
       return reg;

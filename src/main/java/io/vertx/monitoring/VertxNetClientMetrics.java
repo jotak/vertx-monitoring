@@ -37,29 +37,29 @@ class VertxNetClientMetrics {
   final boolean hasRemoteLabel;
 
   VertxNetClientMetrics(VertxMonitoringOptions options, MeterRegistry registry) {
-    this(options, registry, "vertx_net");
+    this(options, registry, "vertx.net");
   }
 
   VertxNetClientMetrics(VertxMonitoringOptions options, MeterRegistry registry, String prefix) {
     if (options.isEnableRemoteLabelForClients()) {
       hasRemoteLabel = true;
-      connections = Gauges.longGauges(prefix + "_client_connections", "Number of connections to the remote host currently opened",
+      connections = Gauges.longGauges(prefix + ".client.connections", "Number of connections to the remote host currently opened",
         registry, Labels.LOCAL, Labels.REMOTE);
-      bytesReceived = new Summaries(prefix + "_client_bytes_received", "Number of bytes received from the remote host",
+      bytesReceived = new Summaries(prefix + ".client.bytesReceived", "Number of bytes received from the remote host",
         registry, Labels.LOCAL, Labels.REMOTE);
-      bytesSent = new Summaries(prefix + "_client_bytes_sent", "Number of bytes sent to the remote host",
+      bytesSent = new Summaries(prefix + ".client.bytesSent", "Number of bytes sent to the remote host",
         registry, Labels.LOCAL, Labels.REMOTE);
-      errorCount = new Counters(prefix + "_client_errors", "Number of errors",
+      errorCount = new Counters(prefix + ".client.errors", "Number of errors",
         registry, Labels.LOCAL, Labels.REMOTE, Labels.CLASS);
     } else {
       hasRemoteLabel = false;
-      connections = Gauges.longGauges(prefix + "_client_connections", "Number of connections to the remote host currently opened",
+      connections = Gauges.longGauges(prefix + ".client.connections", "Number of connections to the remote host currently opened",
         registry, Labels.LOCAL);
-      bytesReceived = new Summaries(prefix + "_client_bytes_received", "Number of bytes received from the remote host",
+      bytesReceived = new Summaries(prefix + ".client.bytesReceived", "Number of bytes received from the remote host",
         registry, Labels.LOCAL);
-      bytesSent = new Summaries(prefix + "_client_bytes_sent", "Number of bytes sent to the remote host",
+      bytesSent = new Summaries(prefix + ".client.bytesSent", "Number of bytes sent to the remote host",
         registry, Labels.LOCAL);
-      errorCount = new Counters(prefix + "_client_errors", "Number of errors",
+      errorCount = new Counters(prefix + ".client.errors", "Number of errors",
         registry, Labels.LOCAL, Labels.CLASS);
     }
   }

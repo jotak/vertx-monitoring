@@ -39,28 +39,28 @@ class VertxHttpClientMetrics extends VertxNetClientMetrics {
   private final Gauges<LongAdder> wsConnections;
 
   VertxHttpClientMetrics(VertxMonitoringOptions options, MeterRegistry registry) {
-    super(options, registry, "vertx_http");
+    super(options, registry, "vertx.http");
     if (hasRemoteLabel) {
-      requests = Gauges.longGauges("vertx_http_client_requests", "Number of requests waiting for a response",
+      requests = Gauges.longGauges("vertx.http.client.requests", "Number of requests waiting for a response",
         registry, Labels.LOCAL, Labels.REMOTE);
-      requestCount = new Counters("vertx_http_client_request_count", "Number of requests sent",
+      requestCount = new Counters("vertx.http.client.requestCount", "Number of requests sent",
         registry, Labels.LOCAL, Labels.REMOTE, Labels.METHOD);
-      responseTime = new Timers("vertx_http_client_reponse_time", "Response time",
+      responseTime = new Timers("vertx.http.client.responseTime", "Response time",
         registry, Labels.LOCAL, Labels.REMOTE);
-      responseCount = new Counters("vertx_http_client_reponse_count", "Response count with codes",
+      responseCount = new Counters("vertx.http.client.responseCount", "Response count with codes",
         registry, Labels.LOCAL, Labels.REMOTE, Labels.CODE);
-      wsConnections = Gauges.longGauges("vertx_http_client_ws_connections", "Number of websockets currently opened",
+      wsConnections = Gauges.longGauges("vertx.http.client.wsConnections", "Number of websockets currently opened",
         registry, Labels.LOCAL, Labels.REMOTE);
     } else {
-      requests = Gauges.longGauges("vertx_http_client_requests", "Number of requests waiting for a response",
+      requests = Gauges.longGauges("vertx.http.client.requests", "Number of requests waiting for a response",
         registry, Labels.LOCAL);
-      requestCount = new Counters("vertx_http_client_request_count", "Number of requests sent",
+      requestCount = new Counters("vertx.http.client.requestCount", "Number of requests sent",
         registry, Labels.LOCAL, Labels.METHOD);
-      responseTime = new Timers("vertx_http_client_reponse_time", "Response time",
+      responseTime = new Timers("vertx.http.client.responseTime", "Response time",
         registry, Labels.LOCAL);
-      responseCount = new Counters("vertx_http_client_reponse_count", "Response count with codes",
+      responseCount = new Counters("vertx.http.client.responseCount", "Response count with codes",
         registry, Labels.LOCAL, Labels.CODE);
-      wsConnections = Gauges.longGauges("vertx_http_client_ws_connections", "Number of websockets currently opened",
+      wsConnections = Gauges.longGauges("vertx.http.client.wsConnections", "Number of websockets currently opened",
         registry, Labels.LOCAL);
     }
   }

@@ -18,6 +18,7 @@ package io.vertx.monitoring.backend;
 import io.micrometer.influx.InfluxConfig;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
+import io.vertx.monitoring.VertxMonitoringOptions;
 
 import java.time.Duration;
 
@@ -27,7 +28,7 @@ import java.time.Duration;
  * @author Dan Kristensen
  */
 @DataObject(generateConverter = true, inheritConverter = true)
-public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxConfig {
+public class VertxInfluxDbOptions extends VertxMonitoringOptions implements InfluxConfig {
 
   /**
    * Default value for metric collection interval (in seconds) = 10.
@@ -87,7 +88,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
   private int readTimeout;
   private int batchSize;
 
-  public InfluxDbOptions() {
+  public VertxInfluxDbOptions() {
     uri = DEFAULT_URI;
     db = DEFAULT_DATABASE;
     prefix = DEFAULT_PREFIX;
@@ -99,7 +100,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     batchSize = DEFAULT_BATCH_SIZE;
   }
 
-  public InfluxDbOptions(InfluxDbOptions other) {
+  public VertxInfluxDbOptions(VertxInfluxDbOptions other) {
     super(other);
     uri = other.uri;
     db = other.db;
@@ -115,16 +116,16 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     batchSize = other.batchSize;
   }
 
-  public InfluxDbOptions(JsonObject json) {
+  public VertxInfluxDbOptions(JsonObject json) {
     this();
-    InfluxDbOptionsConverter.fromJson(json, this);
+    VertxInfluxDbOptionsConverter.fromJson(json, this);
   }
 
   public String getUri() {
     return uri;
   }
 
-  public InfluxDbOptions setUri(String uri) {
+  public VertxInfluxDbOptions setUri(String uri) {
     this.uri = uri;
     return this;
   }
@@ -133,7 +134,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return db;
   }
 
-  public InfluxDbOptions setDb(String db) {
+  public VertxInfluxDbOptions setDb(String db) {
     this.db = db;
     return this;
   }
@@ -142,7 +143,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return prefix;
   }
 
-  public InfluxDbOptions setPrefix(String prefix) {
+  public VertxInfluxDbOptions setPrefix(String prefix) {
     this.prefix = prefix;
     return this;
   }
@@ -151,7 +152,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return userName;
   }
 
-  public InfluxDbOptions setUserName(String userName) {
+  public VertxInfluxDbOptions setUserName(String userName) {
     this.userName = userName;
     return this;
   }
@@ -160,7 +161,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return password;
   }
 
-  public InfluxDbOptions setPassword(String password) {
+  public VertxInfluxDbOptions setPassword(String password) {
     this.password = password;
     return this;
   }
@@ -169,7 +170,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return retentionPolicy;
   }
 
-  public InfluxDbOptions setRetentionPolicy(String retentionPolicy) {
+  public VertxInfluxDbOptions setRetentionPolicy(String retentionPolicy) {
     this.retentionPolicy = retentionPolicy;
     return this;
   }
@@ -178,7 +179,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return compressed;
   }
 
-  public InfluxDbOptions setCompressed(boolean compressed) {
+  public VertxInfluxDbOptions setCompressed(boolean compressed) {
     this.compressed = compressed;
     return this;
   }
@@ -187,7 +188,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return step;
   }
 
-  public InfluxDbOptions setStep(int step) {
+  public VertxInfluxDbOptions setStep(int step) {
     this.step = step;
     return this;
   }
@@ -196,7 +197,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return numThreads;
   }
 
-  public InfluxDbOptions setNumThreads(int numThreads) {
+  public VertxInfluxDbOptions setNumThreads(int numThreads) {
     this.numThreads = numThreads;
     return this;
   }
@@ -205,7 +206,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return connectTimeout;
   }
 
-  public InfluxDbOptions setConnectTimeout(int connectTimeout) {
+  public VertxInfluxDbOptions setConnectTimeout(int connectTimeout) {
     this.connectTimeout = connectTimeout;
     return this;
   }
@@ -214,7 +215,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return readTimeout;
   }
 
-  public InfluxDbOptions setReadTimeout(int readTimeout) {
+  public VertxInfluxDbOptions setReadTimeout(int readTimeout) {
     this.readTimeout = readTimeout;
     return this;
   }
@@ -223,7 +224,7 @@ public class InfluxDbOptions extends MonitoringBackendOptions implements InfluxC
     return batchSize;
   }
 
-  public InfluxDbOptions setBatchSize(int batchSize) {
+  public VertxInfluxDbOptions setBatchSize(int batchSize) {
     this.batchSize = batchSize;
     return this;
   }

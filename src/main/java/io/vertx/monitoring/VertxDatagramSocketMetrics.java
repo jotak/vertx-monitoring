@@ -35,11 +35,11 @@ class VertxDatagramSocketMetrics implements DatagramSocketMetrics {
   private volatile String localAddress;
 
   VertxDatagramSocketMetrics(MeterRegistry registry) {
-    bytesReceived = new Summaries("vertx_datagram_bytes_received", "Total number of datagram bytes received",
+    bytesReceived = new Summaries("vertx.datagram.bytesReceived", "Total number of datagram bytes received",
       registry, Labels.LOCAL);
-    bytesSent = new Summaries("vertx_datagram_bytes_sent", "Total number of datagram bytes sent",
+    bytesSent = new Summaries("vertx.datagram.bytesSent", "Total number of datagram bytes sent",
       registry);
-    errorCount = new Counters("vertx_datagram_errors", "Total number of datagram errors",
+    errorCount = new Counters("vertx.datagram.errors", "Total number of datagram errors",
       registry, Labels.CLASS);
   }
 

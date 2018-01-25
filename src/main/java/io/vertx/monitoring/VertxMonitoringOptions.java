@@ -19,8 +19,6 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.metrics.MetricsOptions;
-import io.vertx.monitoring.backend.MonitoringBackendOptions;
-import io.vertx.monitoring.backend.PrometheusOptions;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -52,7 +50,6 @@ public class VertxMonitoringOptions extends MetricsOptions {
   private String registryName;
   private boolean enableRemoteLabelForClients;
   private boolean enableRemoteLabelForServers;
-  private MonitoringBackendOptions backendOptions;
 
   public VertxMonitoringOptions() {
     disabledMetricsCategories = EnumSet.noneOf(MetricsCategory.class);
@@ -165,15 +162,6 @@ public class VertxMonitoringOptions extends MetricsOptions {
    */
   public VertxMonitoringOptions setEnableRemoteLabelForServers(boolean enableRemoteLabelForServers) {
     this.enableRemoteLabelForServers = enableRemoteLabelForServers;
-    return this;
-  }
-
-  public MonitoringBackendOptions getBackendOptions() {
-    return backendOptions;
-  }
-
-  public VertxMonitoringOptions setBackendOptions(MonitoringBackendOptions backendOptions) {
-    this.backendOptions = backendOptions;
     return this;
   }
 }

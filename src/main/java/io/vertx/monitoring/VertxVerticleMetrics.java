@@ -29,7 +29,7 @@ class VertxVerticleMetrics {
   private final Gauges<LongAdder> verticles;
 
   VertxVerticleMetrics(MeterRegistry registry) {
-    verticles = Gauges.longGauges("vertx_verticle", "Number of verticle instances deployed",
+    verticles = Gauges.longGauges("vertx.verticle", "Number of verticle instances deployed",
       registry, "name");
   }
 
@@ -38,6 +38,6 @@ class VertxVerticleMetrics {
   }
 
   void verticleUndeployed(Verticle verticle) {
-    verticles.get(verticle.getClass().getName()).increment();
+    verticles.get(verticle.getClass().getName()).decrement();
   }
 }

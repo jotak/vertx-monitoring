@@ -42,27 +42,27 @@ class VertxEventBusMetrics implements EventBusMetrics<VertxEventBusMetrics.Handl
   private final Summaries bytesWritten;
 
   VertxEventBusMetrics(MeterRegistry registry) {
-    handlers = Gauges.longGauges("vertx_eventbus_handlers", "Number of event bus handlers in use",
+    handlers = Gauges.longGauges("vertx.eventbus.handlers", "Number of event bus handlers in use",
       registry, Labels.ADDRESS);
-    pending = Gauges.longGauges("vertx_eventbus_pending", "Number of messages not processed yet",
+    pending = Gauges.longGauges("vertx.eventbus.pending", "Number of messages not processed yet",
       registry, Labels.ADDRESS, Labels.SIDE);
-    published = new Counters("vertx_eventbus_published", "Number of messages published (publish / subscribe)",
+    published = new Counters("vertx.eventbus.published", "Number of messages published (publish / subscribe)",
       registry, Labels.ADDRESS, Labels.SIDE);
-    sent = new Counters("vertx_eventbus_sent", "Number of messages sent (point-to-point)",
+    sent = new Counters("vertx.eventbus.sent", "Number of messages sent (point-to-point)",
       registry, Labels.ADDRESS, Labels.SIDE);
-    received = new Counters("vertx_eventbus_received", "Number of messages received",
+    received = new Counters("vertx.eventbus.received", "Number of messages received",
       registry, Labels.ADDRESS, Labels.SIDE);
-    delivered = new Counters("vertx_eventbus_delivered", "Number of messages delivered to handlers",
+    delivered = new Counters("vertx.eventbus.delivered", "Number of messages delivered to handlers",
       registry, Labels.ADDRESS, Labels.SIDE);
-    errorCount = new Counters("vertx_eventbus_errors", "Number of errors",
+    errorCount = new Counters("vertx.eventbus.errors", "Number of errors",
       registry, Labels.ADDRESS, Labels.CLASS);
-    replyFailures = new Counters("vertx_eventbus_reply_failures", "Number of message reply failures",
+    replyFailures = new Counters("vertx.eventbus.replyFailures", "Number of message reply failures",
       registry, Labels.ADDRESS, "failure");
-    processTime = new Timers("vertx_eventbus_processing_time", "Processing time",
+    processTime = new Timers("vertx.eventbus.processingTime", "Processing time",
       registry, Labels.ADDRESS);
-    bytesRead = new Summaries("vertx_eventbus_bytes_read", "Number of bytes received while reading messages from event bus cluster peers",
+    bytesRead = new Summaries("vertx.eventbus.bytesRead", "Number of bytes received while reading messages from event bus cluster peers",
       registry, Labels.ADDRESS);
-    bytesWritten = new Summaries("vertx_eventbus_bytes_written", "Number of bytes sent while sending messages to event bus cluster peers",
+    bytesWritten = new Summaries("vertx.eventbus.bytesWritten", "Number of bytes sent while sending messages to event bus cluster peers",
       registry, Labels.ADDRESS);
   }
 
