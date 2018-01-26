@@ -175,14 +175,28 @@
  * {@link examples.MetricsExamples#accessDefaultRegistry()}
  * ----
  *
- * It is also possible to give a name to the registry used by a Vert.x instance, and retrieve it speciafically:
+ * It is also possible to have separate registries per Vertx instance, by giving a registry name in metrics options.
+ * Then it can be retrieved specifically:
  *
  * [source,$lang]
  * ----
  * {@link examples.MetricsExamples#setupAndAccessCustomRegistry()}
  * ----
  *
- * For micrometer documentation, see http://micrometer.io/docs/concepts#_registry
+ * For documentation about the micrometer registry and how to create metrics, check
+ * link:http://micrometer.io/docs/concepts#_registry[Micrometer doc].
+ *
+ * === Other instrumentation
+ *
+ * Since plain access to micrometer registries is provided, it is possible to leverage the micrometer API.
+ * For instance, to instrument the JVM:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.MetricsExamples#instrumentJVM()}
+ * ----
+ *
+ * _From link:http://micrometer.io/docs/ref/jvm[Micrometer documentation]._
  *
  * == Vert.x core tools metrics
  *

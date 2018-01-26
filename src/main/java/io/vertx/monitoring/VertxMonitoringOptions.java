@@ -136,10 +136,9 @@ public class VertxMonitoringOptions extends MetricsOptions {
   }
 
   /**
-   * Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
-   * To retrieve this registry later, call {@code PrometheusRegistries.get(String)}
-   * Doing so allows to provide application-defined metrics to the same registry.
-   * If {@code registryName} is not provided (or null), Prometheus default registry will be used.
+   * Set a name for the metrics registry, so that a new registry will be created and associated with this name.
+   * If {@code registryName} is not provided (or null), a default registry will be used.
+   * If the same name is given to several Vert.x instances (within the same JVM), they will share the same registry.
    * @param registryName a name to uniquely identify this registry
    */
   public VertxMonitoringOptions setRegistryName(String registryName) {
@@ -154,7 +153,7 @@ public class VertxMonitoringOptions extends MetricsOptions {
   /**
    * Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
    * This is relevant when the application makes client connections to a large number of different clients,
-   * in order to reduce the number of related prometheus metrics created.<br/>
+   * in order to reduce the number of related metrics created.<br/>
    * This option is set to <i>true</i> by default.
    */
   public VertxMonitoringOptions setEnableRemoteLabelForClients(boolean enableRemoteLabelForClients) {
@@ -169,7 +168,7 @@ public class VertxMonitoringOptions extends MetricsOptions {
   /**
    * Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
    * This is relevant when the number of clients connecting to the application servers is small and under control,
-   * in order to reduce the number of related prometheus metrics created.<br/>
+   * in order to reduce the number of related metrics created.<br/>
    * This option is set to <i>false</i> by default.
    */
   public VertxMonitoringOptions setEnableRemoteLabelForServers(boolean enableRemoteLabelForServers) {
@@ -183,7 +182,7 @@ public class VertxMonitoringOptions extends MetricsOptions {
 
   /**
    * Set InfluxDB options.
-   * Setting backend options is mandatory in order to effectively report metrics.
+   * Setting either InfluxDB or Prometheus options is mandatory in order to effectively report metrics.
    * @param influxDbOptions backend options for InfluxDB
    */
   public VertxMonitoringOptions setInfluxDbOptions(VertxInfluxDbOptions influxDbOptions) {
@@ -197,7 +196,7 @@ public class VertxMonitoringOptions extends MetricsOptions {
 
   /**
    * Set Prometheus options.
-   * Setting backend options is mandatory in order to effectively report metrics.
+   * Setting either InfluxDB or Prometheus options is mandatory in order to effectively report metrics.
    * @param prometheusOptions backend options for Prometheus
    */
   public VertxMonitoringOptions setPrometheusOptions(VertxPrometheusOptions prometheusOptions) {

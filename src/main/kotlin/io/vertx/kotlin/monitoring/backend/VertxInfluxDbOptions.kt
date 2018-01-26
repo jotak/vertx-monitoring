@@ -7,19 +7,18 @@ import io.vertx.monitoring.backend.VertxInfluxDbOptions
  *
  * Vert.x InfluxDb monitoring configuration.
  *
- * @param batchSize 
- * @param compressed 
- * @param connectTimeout 
- * @param db 
- * @param enabled 
- * @param numThreads 
- * @param password 
- * @param prefix 
- * @param readTimeout 
- * @param retentionPolicy 
- * @param step 
- * @param uri 
- * @param userName 
+ * @param batchSize  Maximum number of measurements sent per request to InfluxDB. When the maximum is reached, several requests are made. Default is 10000.
+ * @param compressed  Activate or deactivate GZIP compression. It is activated by default.
+ * @param connectTimeout  Connection timeout for InfluxDB server connections, in seconds. Default is 1 second.
+ * @param db  Database name used to store metrics. Default is "default".
+ * @param enabled  Set true to enable InfluxDB reporting
+ * @param numThreads  Number of threads to use by the push scheduler. Default is 2.
+ * @param password  Password used for authenticated connections
+ * @param readTimeout  Read timeout for InfluxDB server connections, in seconds. Default is 10 seconds.
+ * @param retentionPolicy  InfluxDB retention policy
+ * @param step  Push interval steps, in seconds. Default is 10 seconds.
+ * @param uri  URI of the InfluxDB server. <i>Example: http://influx:8086</i>.
+ * @param userName  Username used for authenticated connections
  *
  * <p/>
  * NOTE: This function has been automatically generated from the [io.vertx.monitoring.backend.VertxInfluxDbOptions original] using Vert.x codegen.
@@ -32,7 +31,6 @@ fun VertxInfluxDbOptions(
   enabled: Boolean? = null,
   numThreads: Int? = null,
   password: String? = null,
-  prefix: String? = null,
   readTimeout: Int? = null,
   retentionPolicy: String? = null,
   step: Int? = null,
@@ -59,9 +57,6 @@ fun VertxInfluxDbOptions(
   }
   if (password != null) {
     this.setPassword(password)
-  }
-  if (prefix != null) {
-    this.setPrefix(prefix)
   }
   if (readTimeout != null) {
     this.setReadTimeout(readTimeout)

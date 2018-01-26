@@ -51,11 +51,6 @@ public class VertxInfluxDbOptions implements InfluxConfig {
   public static final String DEFAULT_URI = "http://localhost:8086";
 
   /**
-   * The default prefix = vert.x.
-   */
-  public static final String DEFAULT_PREFIX = "vert.x";
-
-  /**
    * The default InfluxDb database = default.
    */
   public static final String DEFAULT_DATABASE = "default";
@@ -83,7 +78,6 @@ public class VertxInfluxDbOptions implements InfluxConfig {
   private boolean enabled;
   private String uri;
   private String db;
-  private String prefix;
   private String userName;
   private String password;
   private String retentionPolicy;
@@ -98,7 +92,6 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     enabled = DEFAULT_ENABLED;
     uri = DEFAULT_URI;
     db = DEFAULT_DATABASE;
-    prefix = DEFAULT_PREFIX;
     compressed = DEFAULT_COMPRESSION_ENABLED;
     step = DEFAULT_STEP;
     numThreads = DEFAULT_NUM_THREADS;
@@ -111,7 +104,6 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     enabled = other.enabled;
     uri = other.uri;
     db = other.db;
-    prefix = other.prefix;
     userName = other.userName;
     password = other.password;
     retentionPolicy = other.retentionPolicy;
@@ -132,6 +124,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return enabled;
   }
 
+  /**
+   * Set true to enable InfluxDB reporting
+   */
   public VertxInfluxDbOptions setEnabled(boolean enabled) {
     this.enabled = enabled;
     return this;
@@ -141,6 +136,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return uri;
   }
 
+  /**
+   * URI of the InfluxDB server. <i>Example: http://influx:8086</i>.
+   */
   public VertxInfluxDbOptions setUri(String uri) {
     this.uri = uri;
     return this;
@@ -150,17 +148,11 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return db;
   }
 
+  /**
+   * Database name used to store metrics. Default is "default".
+   */
   public VertxInfluxDbOptions setDb(String db) {
     this.db = db;
-    return this;
-  }
-
-  public String getPrefix() {
-    return prefix;
-  }
-
-  public VertxInfluxDbOptions setPrefix(String prefix) {
-    this.prefix = prefix;
     return this;
   }
 
@@ -168,6 +160,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return userName;
   }
 
+  /**
+   * Username used for authenticated connections
+   */
   public VertxInfluxDbOptions setUserName(String userName) {
     this.userName = userName;
     return this;
@@ -177,6 +172,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return password;
   }
 
+  /**
+   * Password used for authenticated connections
+   */
   public VertxInfluxDbOptions setPassword(String password) {
     this.password = password;
     return this;
@@ -186,6 +184,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return retentionPolicy;
   }
 
+  /**
+   * InfluxDB retention policy
+   */
   public VertxInfluxDbOptions setRetentionPolicy(String retentionPolicy) {
     this.retentionPolicy = retentionPolicy;
     return this;
@@ -195,6 +196,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return compressed;
   }
 
+  /**
+   * Activate or deactivate GZIP compression. It is activated by default.
+   */
   public VertxInfluxDbOptions setCompressed(boolean compressed) {
     this.compressed = compressed;
     return this;
@@ -204,6 +208,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return step;
   }
 
+  /**
+   * Push interval steps, in seconds. Default is 10 seconds.
+   */
   public VertxInfluxDbOptions setStep(int step) {
     this.step = step;
     return this;
@@ -213,6 +220,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return numThreads;
   }
 
+  /**
+   * Number of threads to use by the push scheduler. Default is 2.
+   */
   public VertxInfluxDbOptions setNumThreads(int numThreads) {
     this.numThreads = numThreads;
     return this;
@@ -222,6 +232,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return connectTimeout;
   }
 
+  /**
+   * Connection timeout for InfluxDB server connections, in seconds. Default is 1 second.
+   */
   public VertxInfluxDbOptions setConnectTimeout(int connectTimeout) {
     this.connectTimeout = connectTimeout;
     return this;
@@ -231,6 +244,9 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return readTimeout;
   }
 
+  /**
+   * Read timeout for InfluxDB server connections, in seconds. Default is 10 seconds.
+   */
   public VertxInfluxDbOptions setReadTimeout(int readTimeout) {
     this.readTimeout = readTimeout;
     return this;
@@ -240,6 +256,10 @@ public class VertxInfluxDbOptions implements InfluxConfig {
     return batchSize;
   }
 
+  /**
+   * Maximum number of measurements sent per request to InfluxDB. When the maximum is reached, several requests are made.
+   * Default is 10000.
+   */
   public VertxInfluxDbOptions setBatchSize(int batchSize) {
     this.batchSize = batchSize;
     return this;
@@ -248,11 +268,6 @@ public class VertxInfluxDbOptions implements InfluxConfig {
   @Override
   public String get(String k) {
     return null;
-  }
-
-  @Override
-  public String prefix() {
-    return prefix;
   }
 
   @Override

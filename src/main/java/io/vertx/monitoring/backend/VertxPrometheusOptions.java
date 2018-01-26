@@ -77,6 +77,9 @@ public class VertxPrometheusOptions {
     return enabled;
   }
 
+  /**
+   * Set true to enable Prometheus reporting
+   */
   public VertxPrometheusOptions setEnabled(boolean enabled) {
     this.enabled = enabled;
     return this;
@@ -87,7 +90,7 @@ public class VertxPrometheusOptions {
   }
 
   /**
-   * An embedded server will start to expose metrics with Prometheus format
+   * When set, an embedded server will start to expose metrics with Prometheus format
    * @param embeddedServerOptions the server options
    */
   public VertxPrometheusOptions setEmbeddedServerOptions(HttpServerOptions embeddedServerOptions) {
@@ -96,7 +99,7 @@ public class VertxPrometheusOptions {
   }
 
   /**
-   * Set metrics endpoint. Use conjointly with the embedded server options.
+   * Set metrics endpoint. Use conjointly with the embedded server options. Defaults to <i>/metrics</i>.
    * @param embeddedServerEndpoint metrics endpoint
    */
   public VertxPrometheusOptions setEmbeddedServerEndpoint(String embeddedServerEndpoint) {

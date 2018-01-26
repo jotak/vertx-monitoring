@@ -12,19 +12,55 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[batchSize]]`batchSize`|`Number (int)`|-
-|[[compressed]]`compressed`|`Boolean`|-
-|[[connectTimeout]]`connectTimeout`|`Number (int)`|-
-|[[db]]`db`|`String`|-
-|[[enabled]]`enabled`|`Boolean`|-
-|[[numThreads]]`numThreads`|`Number (int)`|-
-|[[password]]`password`|`String`|-
-|[[prefix]]`prefix`|`String`|-
-|[[readTimeout]]`readTimeout`|`Number (int)`|-
-|[[retentionPolicy]]`retentionPolicy`|`String`|-
-|[[step]]`step`|`Number (int)`|-
-|[[uri]]`uri`|`String`|-
-|[[userName]]`userName`|`String`|-
+|[[batchSize]]`batchSize`|`Number (int)`|
++++
+Maximum number of measurements sent per request to InfluxDB. When the maximum is reached, several requests are made.
+ Default is 10000.
++++
+|[[compressed]]`compressed`|`Boolean`|
++++
+Activate or deactivate GZIP compression. It is activated by default.
++++
+|[[connectTimeout]]`connectTimeout`|`Number (int)`|
++++
+Connection timeout for InfluxDB server connections, in seconds. Default is 1 second.
++++
+|[[db]]`db`|`String`|
++++
+Database name used to store metrics. Default is "default".
++++
+|[[enabled]]`enabled`|`Boolean`|
++++
+Set true to enable InfluxDB reporting
++++
+|[[numThreads]]`numThreads`|`Number (int)`|
++++
+Number of threads to use by the push scheduler. Default is 2.
++++
+|[[password]]`password`|`String`|
++++
+Password used for authenticated connections
++++
+|[[readTimeout]]`readTimeout`|`Number (int)`|
++++
+Read timeout for InfluxDB server connections, in seconds. Default is 10 seconds.
++++
+|[[retentionPolicy]]`retentionPolicy`|`String`|
++++
+InfluxDB retention policy
++++
+|[[step]]`step`|`Number (int)`|
++++
+Push interval steps, in seconds. Default is 10 seconds.
++++
+|[[uri]]`uri`|`String`|
++++
+URI of the InfluxDB server. <i>Example: http://influx:8086</i>.
++++
+|[[userName]]`userName`|`String`|
++++
+Username used for authenticated connections
++++
 |===
 
 [[VertxMonitoringOptions]]
@@ -49,14 +85,14 @@ Sets metrics types that are disabled.
 +++
 Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
  This is relevant when the application makes client connections to a large number of different clients,
- in order to reduce the number of related prometheus metrics created.<br/>
+ in order to reduce the number of related metrics created.<br/>
  This option is set to <i>true</i> by default.
 +++
 |[[enableRemoteLabelForServers]]`enableRemoteLabelForServers`|`Boolean`|
 +++
 Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
  This is relevant when the number of clients connecting to the application servers is small and under control,
- in order to reduce the number of related prometheus metrics created.<br/>
+ in order to reduce the number of related metrics created.<br/>
  This option is set to <i>false</i> by default.
 +++
 |[[enabled]]`enabled`|`Boolean`|
@@ -66,19 +102,18 @@ Set whether metrics will be enabled on the Vert.x instance. Metrics are not enab
 |[[influxDbOptions]]`influxDbOptions`|`link:dataobjects.html#VertxInfluxDbOptions[VertxInfluxDbOptions]`|
 +++
 Set InfluxDB options.
- Setting backend options is mandatory in order to effectively report metrics.
+ Setting either InfluxDB or Prometheus options is mandatory in order to effectively report metrics.
 +++
 |[[prometheusOptions]]`prometheusOptions`|`link:dataobjects.html#VertxPrometheusOptions[VertxPrometheusOptions]`|
 +++
 Set Prometheus options.
- Setting backend options is mandatory in order to effectively report metrics.
+ Setting either InfluxDB or Prometheus options is mandatory in order to effectively report metrics.
 +++
 |[[registryName]]`registryName`|`String`|
 +++
-Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
- To retrieve this registry later, call <code>PrometheusRegistries.get(String)</code>
- Doing so allows to provide application-defined metrics to the same registry.
- If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
+Set a name for the metrics registry, so that a new registry will be created and associated with this name.
+ If <code>registryName</code> is not provided (or null), a default registry will be used.
+ If the same name is given to several Vert.x instances (within the same JVM), they will share the same registry.
 +++
 |===
 
@@ -96,12 +131,15 @@ Set a name for the prometheus registry, so that a new registry will be created a
 ^|Name | Type ^| Description
 |[[embeddedServerEndpoint]]`embeddedServerEndpoint`|`String`|
 +++
-Set metrics endpoint. Use conjointly with the embedded server options.
+Set metrics endpoint. Use conjointly with the embedded server options. Defaults to <i>/metrics</i>.
 +++
 |[[embeddedServerOptions]]`embeddedServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|
 +++
-An embedded server will start to expose metrics with Prometheus format
+When set, an embedded server will start to expose metrics with Prometheus format
 +++
-|[[enabled]]`enabled`|`Boolean`|-
+|[[enabled]]`enabled`|`Boolean`|
++++
+Set true to enable Prometheus reporting
++++
 |===
 

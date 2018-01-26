@@ -80,14 +80,12 @@ public class VertxNetClientServerMetricsTest {
     runClientRequests(ctx);
 
     List<RegistryInspector.Datapoint> datapoints = RegistryInspector.listWithoutTimers("vertx.net.client.", registryName);
-    System.out.println("12");
     assertThat(datapoints).containsOnly(
         dp("vertx.net.client.connections[local=?,remote=localhost:9194]$Value", 0),
         dp("vertx.net.client.bytesReceived[local=?,remote=localhost:9194]$Count", concurrentClients * SENT_COUNT),
         dp("vertx.net.client.bytesReceived[local=?,remote=localhost:9194]$Total", concurrentClients * SENT_COUNT * SERVER_RESPONSE.getBytes().length),
         dp("vertx.net.client.bytesSent[local=?,remote=localhost:9194]$Count", concurrentClients * SENT_COUNT),
         dp("vertx.net.client.bytesSent[local=?,remote=localhost:9194]$Total", concurrentClients * SENT_COUNT * CLIENT_REQUEST.getBytes().length));
-    System.out.println("13");
   }
 
   @Test

@@ -48,9 +48,6 @@ public class VertxInfluxDbOptionsConverter {
     if (json.getValue("password") instanceof String) {
       obj.setPassword((String)json.getValue("password"));
     }
-    if (json.getValue("prefix") instanceof String) {
-      obj.setPrefix((String)json.getValue("prefix"));
-    }
     if (json.getValue("readTimeout") instanceof Number) {
       obj.setReadTimeout(((Number)json.getValue("readTimeout")).intValue());
     }
@@ -79,9 +76,6 @@ public class VertxInfluxDbOptionsConverter {
     json.put("numThreads", obj.getNumThreads());
     if (obj.getPassword() != null) {
       json.put("password", obj.getPassword());
-    }
-    if (obj.getPrefix() != null) {
-      json.put("prefix", obj.getPrefix());
     }
     json.put("readTimeout", obj.getReadTimeout());
     if (obj.getRetentionPolicy() != null) {

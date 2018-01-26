@@ -8,9 +8,9 @@ import io.vertx.core.http.HttpServerOptions
  *
  * Options for Prometheus metrics backend.
  *
- * @param embeddedServerEndpoint  Set metrics endpoint. Use conjointly with the embedded server options.
- * @param embeddedServerOptions  An embedded server will start to expose metrics with Prometheus format
- * @param enabled 
+ * @param embeddedServerEndpoint  Set metrics endpoint. Use conjointly with the embedded server options. Defaults to <i>/metrics</i>.
+ * @param embeddedServerOptions  When set, an embedded server will start to expose metrics with Prometheus format
+ * @param enabled  Set true to enable Prometheus reporting
  *
  * <p/>
  * NOTE: This function has been automatically generated from the [io.vertx.monitoring.backend.VertxPrometheusOptions original] using Vert.x codegen.

@@ -239,7 +239,8 @@ def registry = io.vertx.monitoring.backend.BackendRegistries.getDefaultNow()
 
 ----
 
-It is also possible to give a name to the registry used by a Vert.x instance, and retrieve it speciafically:
+It is also possible to have separate registries per Vertx instance, by giving a registry name in metrics options.
+Then it can be retrieved specifically:
 
 [source,groovy]
 ----
@@ -258,7 +259,27 @@ def registry = io.vertx.monitoring.backend.BackendRegistries.getNow("my registry
 
 ----
 
-For micrometer documentation, see http://micrometer.io/docs/concepts#_registry
+For documentation about the micrometer registry and how to create metrics, check
+link:http://micrometer.io/docs/concepts#_registry[Micrometer doc].
+
+=== Other instrumentation
+
+Since plain access to micrometer registries is provided, it is possible to leverage the micrometer API.
+For instance, to instrument the JVM:
+
+[source,groovy]
+----
+def registry = io.vertx.monitoring.backend.BackendRegistries.getDefaultNow()
+
+new io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics().bindTo(registry)
+new io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics().bindTo(registry)
+new io.micrometer.core.instrument.binder.jvm.JvmGcMetrics().bindTo(registry)
+new io.micrometer.core.instrument.binder.system.ProcessorMetrics().bindTo(registry)
+new io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics().bindTo(registry)
+
+----
+
+_From link:http://micrometer.io/docs/ref/jvm[Micrometer documentation]._
 
 == Vert.x core tools metrics
 
