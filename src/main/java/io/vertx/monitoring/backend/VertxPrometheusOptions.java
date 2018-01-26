@@ -19,7 +19,6 @@ package io.vertx.monitoring.backend;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
-import io.vertx.monitoring.VertxMonitoringOptions;
 
 /**
  * Options for Prometheus metrics backend.
@@ -27,13 +26,19 @@ import io.vertx.monitoring.VertxMonitoringOptions;
  * @author Joel Takvorian
  */
 @DataObject(generateConverter = true, inheritConverter = true)
-public class VertxPrometheusOptions extends VertxMonitoringOptions {
+public class VertxPrometheusOptions {
+
+  /**
+   * Default value for enabled = false.
+   */
+  public static final boolean DEFAULT_ENABLED = false;
 
   /**
    * The default metrics endpoint = /metrics when using an embedded server.
    */
   public static final String DEFAULT_EMBEDDED_SERVER_ENDPOINT = "/metrics";
 
+  private boolean enabled;
   private HttpServerOptions embeddedServerOptions;
   private String embeddedServerEndpoint;
 
@@ -41,7 +46,7 @@ public class VertxPrometheusOptions extends VertxMonitoringOptions {
    * Default constructor
    */
   public VertxPrometheusOptions() {
-    super();
+    enabled = DEFAULT_ENABLED;
     embeddedServerEndpoint = DEFAULT_EMBEDDED_SERVER_ENDPOINT;
   }
 
@@ -51,7 +56,7 @@ public class VertxPrometheusOptions extends VertxMonitoringOptions {
    * @param other The other {@link VertxPrometheusOptions} to copy when creating this
    */
   public VertxPrometheusOptions(VertxPrometheusOptions other) {
-    super(other);
+    enabled = other.enabled;
     embeddedServerEndpoint = other.embeddedServerEndpoint != null ? other.embeddedServerEndpoint : DEFAULT_EMBEDDED_SERVER_ENDPOINT;
     if (other.embeddedServerOptions != null) {
       embeddedServerOptions = new HttpServerOptions(other.embeddedServerOptions);
@@ -68,9 +73,12 @@ public class VertxPrometheusOptions extends VertxMonitoringOptions {
     VertxPrometheusOptionsConverter.fromJson(json, this);
   }
 
-  @Override
-  public VertxPrometheusOptions setEnabled(boolean enable) {
-    super.setEnabled(enable);
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public VertxPrometheusOptions setEnabled(boolean enabled) {
+    this.enabled = enabled;
     return this;
   }
 

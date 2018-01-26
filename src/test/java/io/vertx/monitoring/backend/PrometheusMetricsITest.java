@@ -46,9 +46,10 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldStartEmbeddedServer(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxPrometheusOptions()
-          .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))
-          .setEnabled(true)));
+      .setMetricsOptions(new VertxMonitoringOptions()
+        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true)
+          .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090)))
+        .setEnabled(true)));
 
     Async async = context.async();
     HttpClientRequest req = vertx.createHttpClient()
@@ -67,12 +68,13 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldBindExistingServer(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxPrometheusOptions().setEnabled(true)));
+      .setMetricsOptions(new VertxMonitoringOptions()
+        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
+        .setEnabled(true)));
 
     Router router = Router.router(vertx);
     router.route("/custom").handler(routingContext -> {
-      PrometheusMeterRegistry prometheusRegistry
-        = (PrometheusMeterRegistry) BackendRegistries.getNow(VertxMonitoringOptions.DEFAULT_REGISTRY_NAME).get();
+      PrometheusMeterRegistry prometheusRegistry = (PrometheusMeterRegistry) BackendRegistries.getDefaultNow();
       String response = prometheusRegistry.scrape();
       routingContext.response().end(response);
     });
@@ -95,10 +97,11 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldExcludeCategory(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxPrometheusOptions()
-          .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))
-          .addDisabledMetricsCategory(MetricsCategory.HTTP_SERVER)
-          .setEnabled(true)));
+      .setMetricsOptions(new VertxMonitoringOptions()
+        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true)
+          .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090)))
+        .addDisabledMetricsCategory(MetricsCategory.HTTP_SERVER)
+        .setEnabled(true)));
 
     Async async = context.async();
     HttpClientRequest req = vertx.createHttpClient()
@@ -118,9 +121,10 @@ public class PrometheusMetricsITest {
   @Test
   public void shouldExposeEventBusMetrics(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxPrometheusOptions()
-          .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090))
-          .setEnabled(true)));
+      .setMetricsOptions(new VertxMonitoringOptions()
+        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true)
+          .setEmbeddedServerOptions(new HttpServerOptions().setPort(9090)))
+        .setEnabled(true)));
 
     // Send something on the eventbus and wait til it's received
     Async asyncEB = context.async();

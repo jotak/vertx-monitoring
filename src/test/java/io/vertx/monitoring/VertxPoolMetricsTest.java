@@ -29,7 +29,8 @@ public class VertxPoolMetricsTest {
     int taskCount = maxPoolSize * 3;
     int sleepMillis = 30;
 
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxPrometheusOptions()
+    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxMonitoringOptions()
+      .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
       .setEnabled(true)))
       .exceptionHandler(context.exceptionHandler());
 

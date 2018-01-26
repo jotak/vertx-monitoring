@@ -16,39 +16,11 @@
 |[[compressed]]`compressed`|`Boolean`|-
 |[[connectTimeout]]`connectTimeout`|`Number (int)`|-
 |[[db]]`db`|`String`|-
-|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
-+++
-Sets metrics types that are disabled.
-+++
-|[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
-+++
-Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
- This is relevant when the application makes client connections to a large number of different clients,
- in order to reduce the number of related prometheus metrics created.<br/>
- This option is set to <i>true</i> by default.
-+++
-|[[enableRemoteLabelForServers]]`enableRemoteLabelForServers`|`Boolean`|
-+++
-Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
- This is relevant when the number of clients connecting to the application servers is small and under control,
- in order to reduce the number of related prometheus metrics created.<br/>
- This option is set to <i>false</i> by default.
-+++
-|[[enabled]]`enabled`|`Boolean`|
-+++
-Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
-+++
+|[[enabled]]`enabled`|`Boolean`|-
 |[[numThreads]]`numThreads`|`Number (int)`|-
 |[[password]]`password`|`String`|-
 |[[prefix]]`prefix`|`String`|-
 |[[readTimeout]]`readTimeout`|`Number (int)`|-
-|[[registryName]]`registryName`|`String`|
-+++
-Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
- To retrieve this registry later, call <code>PrometheusRegistries.get(String)</code>
- Doing so allows to provide application-defined metrics to the same registry.
- If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
-+++
 |[[retentionPolicy]]`retentionPolicy`|`String`|-
 |[[step]]`step`|`Number (int)`|-
 |[[uri]]`uri`|`String`|-
@@ -59,7 +31,9 @@ Set a name for the prometheus registry, so that a new registry will be created a
 == VertxMonitoringOptions
 
 ++++
- Vert.x monitoring configuration.
+ Vert.x monitoring configuration.<br/>
+ It is required to set either link or link (but not both)
+ in order to effectively report metrics.
 ++++
 '''
 
@@ -88,6 +62,16 @@ Set true to allow generation of a label named "remote" on server-related metrics
 |[[enabled]]`enabled`|`Boolean`|
 +++
 Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
++++
+|[[influxDbOptions]]`influxDbOptions`|`link:dataobjects.html#VertxInfluxDbOptions[VertxInfluxDbOptions]`|
++++
+Set InfluxDB options.
+ Setting backend options is mandatory in order to effectively report metrics.
++++
+|[[prometheusOptions]]`prometheusOptions`|`link:dataobjects.html#VertxPrometheusOptions[VertxPrometheusOptions]`|
++++
+Set Prometheus options.
+ Setting backend options is mandatory in order to effectively report metrics.
 +++
 |[[registryName]]`registryName`|`String`|
 +++
@@ -110,10 +94,6 @@ Set a name for the prometheus registry, so that a new registry will be created a
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[disabledMetricsCategories]]`disabledMetricsCategories`|`Array of link:enums.html#MetricsCategory[MetricsCategory]`|
-+++
-Sets metrics types that are disabled.
-+++
 |[[embeddedServerEndpoint]]`embeddedServerEndpoint`|`String`|
 +++
 Set metrics endpoint. Use conjointly with the embedded server options.
@@ -122,30 +102,6 @@ Set metrics endpoint. Use conjointly with the embedded server options.
 +++
 An embedded server will start to expose metrics with Prometheus format
 +++
-|[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
-+++
-Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
- This is relevant when the application makes client connections to a large number of different clients,
- in order to reduce the number of related prometheus metrics created.<br/>
- This option is set to <i>true</i> by default.
-+++
-|[[enableRemoteLabelForServers]]`enableRemoteLabelForServers`|`Boolean`|
-+++
-Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
- This is relevant when the number of clients connecting to the application servers is small and under control,
- in order to reduce the number of related prometheus metrics created.<br/>
- This option is set to <i>false</i> by default.
-+++
-|[[enabled]]`enabled`|`Boolean`|
-+++
-Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
-+++
-|[[registryName]]`registryName`|`String`|
-+++
-Set a name for the prometheus registry, so that a new registry will be created and associated with this name.
- To retrieve this registry later, call <code>PrometheusRegistries.get(String)</code>
- Doing so allows to provide application-defined metrics to the same registry.
- If <code>registryName</code> is not provided (or null), Prometheus default registry will be used.
-+++
+|[[enabled]]`enabled`|`Boolean`|-
 |===
 

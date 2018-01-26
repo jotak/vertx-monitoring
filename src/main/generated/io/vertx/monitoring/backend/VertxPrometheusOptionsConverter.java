@@ -27,51 +27,24 @@ import io.vertx.core.json.JsonArray;
 public class VertxPrometheusOptionsConverter {
 
   public static void fromJson(JsonObject json, VertxPrometheusOptions obj) {
-    if (json.getValue("disabledMetricsCategories") instanceof JsonArray) {
-      java.util.LinkedHashSet<io.vertx.monitoring.MetricsCategory> list = new java.util.LinkedHashSet<>();
-      json.getJsonArray("disabledMetricsCategories").forEach( item -> {
-        if (item instanceof String)
-          list.add(io.vertx.monitoring.MetricsCategory.valueOf((String)item));
-      });
-      obj.setDisabledMetricsCategories(list);
-    }
     if (json.getValue("embeddedServerEndpoint") instanceof String) {
       obj.setEmbeddedServerEndpoint((String)json.getValue("embeddedServerEndpoint"));
     }
     if (json.getValue("embeddedServerOptions") instanceof JsonObject) {
       obj.setEmbeddedServerOptions(new io.vertx.core.http.HttpServerOptions((JsonObject)json.getValue("embeddedServerOptions")));
     }
-    if (json.getValue("enableRemoteLabelForClients") instanceof Boolean) {
-      obj.setEnableRemoteLabelForClients((Boolean)json.getValue("enableRemoteLabelForClients"));
-    }
-    if (json.getValue("enableRemoteLabelForServers") instanceof Boolean) {
-      obj.setEnableRemoteLabelForServers((Boolean)json.getValue("enableRemoteLabelForServers"));
-    }
     if (json.getValue("enabled") instanceof Boolean) {
       obj.setEnabled((Boolean)json.getValue("enabled"));
-    }
-    if (json.getValue("registryName") instanceof String) {
-      obj.setRegistryName((String)json.getValue("registryName"));
     }
   }
 
   public static void toJson(VertxPrometheusOptions obj, JsonObject json) {
-    if (obj.getDisabledMetricsCategories() != null) {
-      JsonArray array = new JsonArray();
-      obj.getDisabledMetricsCategories().forEach(item -> array.add(item.name()));
-      json.put("disabledMetricsCategories", array);
-    }
     if (obj.getEmbeddedServerEndpoint() != null) {
       json.put("embeddedServerEndpoint", obj.getEmbeddedServerEndpoint());
     }
     if (obj.getEmbeddedServerOptions() != null) {
       json.put("embeddedServerOptions", obj.getEmbeddedServerOptions().toJson());
     }
-    json.put("enableRemoteLabelForClients", obj.isEnableRemoteLabelForClients());
-    json.put("enableRemoteLabelForServers", obj.isEnableRemoteLabelForServers());
     json.put("enabled", obj.isEnabled());
-    if (obj.getRegistryName() != null) {
-      json.put("registryName", obj.getRegistryName());
-    }
   }
 }

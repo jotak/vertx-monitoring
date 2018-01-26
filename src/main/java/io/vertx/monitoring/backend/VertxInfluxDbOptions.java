@@ -18,7 +18,6 @@ package io.vertx.monitoring.backend;
 import io.micrometer.influx.InfluxConfig;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
-import io.vertx.monitoring.VertxMonitoringOptions;
 
 import java.time.Duration;
 
@@ -26,9 +25,15 @@ import java.time.Duration;
  * Vert.x InfluxDb monitoring configuration.
  *
  * @author Dan Kristensen
+ * @author Joel Takvorian
  */
 @DataObject(generateConverter = true, inheritConverter = true)
-public class VertxInfluxDbOptions extends VertxMonitoringOptions implements InfluxConfig {
+public class VertxInfluxDbOptions implements InfluxConfig {
+
+  /**
+   * Default value for enabled = false.
+   */
+  public static final boolean DEFAULT_ENABLED = false;
 
   /**
    * Default value for metric collection interval (in seconds) = 10.
@@ -75,6 +80,7 @@ public class VertxInfluxDbOptions extends VertxMonitoringOptions implements Infl
    */
   public static final int DEFAULT_READ_TIMEOUT = 10;
 
+  private boolean enabled;
   private String uri;
   private String db;
   private String prefix;
@@ -89,6 +95,7 @@ public class VertxInfluxDbOptions extends VertxMonitoringOptions implements Infl
   private int batchSize;
 
   public VertxInfluxDbOptions() {
+    enabled = DEFAULT_ENABLED;
     uri = DEFAULT_URI;
     db = DEFAULT_DATABASE;
     prefix = DEFAULT_PREFIX;
@@ -101,7 +108,7 @@ public class VertxInfluxDbOptions extends VertxMonitoringOptions implements Infl
   }
 
   public VertxInfluxDbOptions(VertxInfluxDbOptions other) {
-    super(other);
+    enabled = other.enabled;
     uri = other.uri;
     db = other.db;
     prefix = other.prefix;
@@ -119,6 +126,15 @@ public class VertxInfluxDbOptions extends VertxMonitoringOptions implements Infl
   public VertxInfluxDbOptions(JsonObject json) {
     this();
     VertxInfluxDbOptionsConverter.fromJson(json, this);
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public VertxInfluxDbOptions setEnabled(boolean enabled) {
+    this.enabled = enabled;
+    return this;
   }
 
   public String getUri() {
@@ -272,11 +288,6 @@ public class VertxInfluxDbOptions extends VertxMonitoringOptions implements Infl
   @Override
   public Duration step() {
     return Duration.ofSeconds(step);
-  }
-
-  @Override
-  public boolean enabled() {
-    return isEnabled();
   }
 
   @Override

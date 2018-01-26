@@ -39,20 +39,6 @@ public class VertxInfluxDbOptionsConverter {
     if (json.getValue("db") instanceof String) {
       obj.setDb((String)json.getValue("db"));
     }
-    if (json.getValue("disabledMetricsCategories") instanceof JsonArray) {
-      java.util.LinkedHashSet<io.vertx.monitoring.MetricsCategory> list = new java.util.LinkedHashSet<>();
-      json.getJsonArray("disabledMetricsCategories").forEach( item -> {
-        if (item instanceof String)
-          list.add(io.vertx.monitoring.MetricsCategory.valueOf((String)item));
-      });
-      obj.setDisabledMetricsCategories(list);
-    }
-    if (json.getValue("enableRemoteLabelForClients") instanceof Boolean) {
-      obj.setEnableRemoteLabelForClients((Boolean)json.getValue("enableRemoteLabelForClients"));
-    }
-    if (json.getValue("enableRemoteLabelForServers") instanceof Boolean) {
-      obj.setEnableRemoteLabelForServers((Boolean)json.getValue("enableRemoteLabelForServers"));
-    }
     if (json.getValue("enabled") instanceof Boolean) {
       obj.setEnabled((Boolean)json.getValue("enabled"));
     }
@@ -67,9 +53,6 @@ public class VertxInfluxDbOptionsConverter {
     }
     if (json.getValue("readTimeout") instanceof Number) {
       obj.setReadTimeout(((Number)json.getValue("readTimeout")).intValue());
-    }
-    if (json.getValue("registryName") instanceof String) {
-      obj.setRegistryName((String)json.getValue("registryName"));
     }
     if (json.getValue("retentionPolicy") instanceof String) {
       obj.setRetentionPolicy((String)json.getValue("retentionPolicy"));
@@ -92,13 +75,6 @@ public class VertxInfluxDbOptionsConverter {
     if (obj.getDb() != null) {
       json.put("db", obj.getDb());
     }
-    if (obj.getDisabledMetricsCategories() != null) {
-      JsonArray array = new JsonArray();
-      obj.getDisabledMetricsCategories().forEach(item -> array.add(item.name()));
-      json.put("disabledMetricsCategories", array);
-    }
-    json.put("enableRemoteLabelForClients", obj.isEnableRemoteLabelForClients());
-    json.put("enableRemoteLabelForServers", obj.isEnableRemoteLabelForServers());
     json.put("enabled", obj.isEnabled());
     json.put("numThreads", obj.getNumThreads());
     if (obj.getPassword() != null) {
@@ -108,9 +84,6 @@ public class VertxInfluxDbOptionsConverter {
       json.put("prefix", obj.getPrefix());
     }
     json.put("readTimeout", obj.getReadTimeout());
-    if (obj.getRegistryName() != null) {
-      json.put("registryName", obj.getRegistryName());
-    }
     if (obj.getRetentionPolicy() != null) {
       json.put("retentionPolicy", obj.getRetentionPolicy());
     }

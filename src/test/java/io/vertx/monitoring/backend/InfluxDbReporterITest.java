@@ -24,6 +24,7 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import io.vertx.monitoring.VertxMonitoringOptions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,12 @@ public class InfluxDbReporterITest {
   @Before
   public void setUp(TestContext context) {
     vertx = Vertx.vertx(new VertxOptions()
-      .setMetricsOptions(new VertxInfluxDbOptions().setStep(1).setRegistryName("influx").setEnabled(true)));
+      .setMetricsOptions(new VertxMonitoringOptions()
+        .setInfluxDbOptions(new VertxInfluxDbOptions().setEnabled(true)
+          .setStep(1)
+          .setEnabled(true))
+        .setRegistryName("influx")
+        .setEnabled(true)));
   }
 
   @After

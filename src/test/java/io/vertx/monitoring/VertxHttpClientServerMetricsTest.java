@@ -44,7 +44,8 @@ public class VertxHttpClientServerMetricsTest {
 
   @Before
   public void setUp(TestContext ctx) {
-    vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxPrometheusOptions()
+    vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxMonitoringOptions()
+        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
       .setRegistryName(registryName)
       .setEnabled(true)))
       .exceptionHandler(ctx.exceptionHandler());

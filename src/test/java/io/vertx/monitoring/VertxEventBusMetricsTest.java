@@ -27,7 +27,9 @@ public class VertxEventBusMetricsTest {
 
   @Test
   public void shouldReportEventbusMetrics(TestContext context) throws InterruptedException {
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxPrometheusOptions().setEnabled(true)))
+    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxMonitoringOptions()
+        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
+      .setEnabled(true)))
       .exceptionHandler(t -> {
         if (t.getMessage() == null || !t.getMessage().contains("expected failure")) {
           context.exceptionHandler().handle(t);

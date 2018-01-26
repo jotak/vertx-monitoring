@@ -19,12 +19,16 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.metrics.MetricsOptions;
+import io.vertx.monitoring.backend.VertxInfluxDbOptions;
+import io.vertx.monitoring.backend.VertxPrometheusOptions;
 
 import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Vert.x monitoring configuration.
+ * Vert.x monitoring configuration.<br/>
+ * It is required to set either {@link #influxDbOptions} or {@link #prometheusOptions} (but not both)
+ * in order to effectively report metrics.
  *
  * @author Joel Takvorian
  */
@@ -50,6 +54,8 @@ public class VertxMonitoringOptions extends MetricsOptions {
   private String registryName;
   private boolean enableRemoteLabelForClients;
   private boolean enableRemoteLabelForServers;
+  private VertxInfluxDbOptions influxDbOptions;
+  private VertxPrometheusOptions prometheusOptions;
 
   public VertxMonitoringOptions() {
     disabledMetricsCategories = EnumSet.noneOf(MetricsCategory.class);
@@ -64,6 +70,12 @@ public class VertxMonitoringOptions extends MetricsOptions {
     registryName = other.registryName;
     enableRemoteLabelForClients = other.enableRemoteLabelForClients;
     enableRemoteLabelForServers = other.enableRemoteLabelForServers;
+    if (other.influxDbOptions != null) {
+      influxDbOptions = new VertxInfluxDbOptions(other.influxDbOptions);
+    }
+    if (other.prometheusOptions != null) {
+      prometheusOptions = new VertxPrometheusOptions(other.prometheusOptions);
+    }
   }
 
   public VertxMonitoringOptions(JsonObject json) {
@@ -162,6 +174,34 @@ public class VertxMonitoringOptions extends MetricsOptions {
    */
   public VertxMonitoringOptions setEnableRemoteLabelForServers(boolean enableRemoteLabelForServers) {
     this.enableRemoteLabelForServers = enableRemoteLabelForServers;
+    return this;
+  }
+
+  public VertxInfluxDbOptions getInfluxDbOptions() {
+    return influxDbOptions;
+  }
+
+  /**
+   * Set InfluxDB options.
+   * Setting backend options is mandatory in order to effectively report metrics.
+   * @param influxDbOptions backend options for InfluxDB
+   */
+  public VertxMonitoringOptions setInfluxDbOptions(VertxInfluxDbOptions influxDbOptions) {
+    this.influxDbOptions = influxDbOptions;
+    return this;
+  }
+
+  public VertxPrometheusOptions getPrometheusOptions() {
+    return prometheusOptions;
+  }
+
+  /**
+   * Set Prometheus options.
+   * Setting backend options is mandatory in order to effectively report metrics.
+   * @param prometheusOptions backend options for Prometheus
+   */
+  public VertxMonitoringOptions setPrometheusOptions(VertxPrometheusOptions prometheusOptions) {
+    this.prometheusOptions = prometheusOptions;
     return this;
   }
 }

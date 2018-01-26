@@ -44,7 +44,7 @@ final class RegistryInspector {
   }
 
   static List<Datapoint> listWithoutTimers(String startsWith, String regName) {
-    MeterRegistry registry = BackendRegistries.getNow(regName).get();
+    MeterRegistry registry = BackendRegistries.getNow(regName);
     return registry.getMeters().stream()
       .filter(m -> m.type() != Meter.Type.Timer && m.type() != Meter.Type.LongTaskTimer)
       .filter(m -> m.getId().getName().startsWith(startsWith))
@@ -57,7 +57,7 @@ final class RegistryInspector {
   }
 
   static List<Datapoint> listTimers(String startsWith, String regName) {
-    MeterRegistry registry = BackendRegistries.getNow(regName).get();
+    MeterRegistry registry = BackendRegistries.getNow(regName);
     return registry.getMeters().stream()
       .filter(m -> m.type() == Meter.Type.Timer || m.type() == Meter.Type.LongTaskTimer)
       .filter(m -> m.getId().getName().startsWith(startsWith))

@@ -22,7 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class VertxDatagramSocketMetricsTest {
   @Test
   public void shouldReportDatagramMetrics(TestContext context) throws InterruptedException {
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxPrometheusOptions().setEnabled(true)))
+    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxMonitoringOptions()
+        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
+      .setEnabled(true)))
       .exceptionHandler(context.exceptionHandler());
 
     String datagramContent = "some text";

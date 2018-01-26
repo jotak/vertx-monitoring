@@ -44,6 +44,12 @@ public class VertxMonitoringOptionsConverter {
     if (json.getValue("enabled") instanceof Boolean) {
       obj.setEnabled((Boolean)json.getValue("enabled"));
     }
+    if (json.getValue("influxDbOptions") instanceof JsonObject) {
+      obj.setInfluxDbOptions(new io.vertx.monitoring.backend.VertxInfluxDbOptions((JsonObject)json.getValue("influxDbOptions")));
+    }
+    if (json.getValue("prometheusOptions") instanceof JsonObject) {
+      obj.setPrometheusOptions(new io.vertx.monitoring.backend.VertxPrometheusOptions((JsonObject)json.getValue("prometheusOptions")));
+    }
     if (json.getValue("registryName") instanceof String) {
       obj.setRegistryName((String)json.getValue("registryName"));
     }

@@ -27,7 +27,8 @@ public class VertxVerticleMetricsTest {
   public void shouldReportVerticleMetrics(TestContext context) throws InterruptedException {
     String metricName = "vertx.verticle[name=" + SampleVerticle.class.getName() + "]";
 
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxPrometheusOptions()
+    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new VertxMonitoringOptions()
+      .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
       .setEnabled(true)))
       .exceptionHandler(context.exceptionHandler());
 
