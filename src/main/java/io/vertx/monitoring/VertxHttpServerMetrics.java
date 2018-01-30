@@ -40,17 +40,12 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
   private final Gauges<LongAdder> wsConnections;
 
   VertxHttpServerMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
-    super(labelMatchers, registry, MetricsCategory.HTTP_SERVER, "vertx.http");
-    requests = Gauges.longGauges(MetricsCategory.HTTP_SERVER, "vertx.http.server.requests",
-      "Number of requests being processed", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
-    requestCount = new Counters(MetricsCategory.HTTP_SERVER, "vertx.http.server.requestCount",
-      "Number of processed requests", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH, Labels.METHOD, Labels.CODE);
-    requestResetCount = new Counters(MetricsCategory.HTTP_SERVER, "vertx.http.server.requestResetCount",
-      "Number of requests reset", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
-    processingTime = new Timers(MetricsCategory.HTTP_SERVER, "vertx.http.server.responseTime",
-      "Request processing time", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
-    wsConnections = Gauges.longGauges(MetricsCategory.HTTP_SERVER, "vertx.http.server.wsConnections",
-      "Number of websockets currently opened", registry, Labels.LOCAL, Labels.REMOTE);
+    super(labelMatchers, registry, MetricsCategory.HTTP_SERVER, "vertx.http.server.");
+    requests = longGauges("requests", "Number of requests being processed", Labels.LOCAL, Labels.REMOTE, Labels.PATH);
+    requestCount = counters("requestCount", "Number of processed requests", Labels.LOCAL, Labels.REMOTE, Labels.PATH, Labels.METHOD, Labels.CODE);
+    requestResetCount = counters("requestResetCount", "Number of requests reset", Labels.LOCAL, Labels.REMOTE, Labels.PATH);
+    processingTime = timers("responseTime", "Request processing time", Labels.LOCAL, Labels.REMOTE, Labels.PATH);
+    wsConnections = longGauges("wsConnections", "Number of websockets currently opened", Labels.LOCAL, Labels.REMOTE);
   }
 
   @Override

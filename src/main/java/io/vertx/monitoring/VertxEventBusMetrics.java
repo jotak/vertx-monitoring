@@ -29,8 +29,7 @@ import java.util.concurrent.atomic.LongAdder;
 /**
  * @author Joel Takvorian
  */
-class VertxEventBusMetrics implements EventBusMetrics<VertxEventBusMetrics.Handler> {
-  private final LabelMatchers labelMatchers;
+class VertxEventBusMetrics extends AbstractMetrics implements EventBusMetrics<VertxEventBusMetrics.Handler> {
   private final Gauges<LongAdder> handlers;
   private final Gauges<LongAdder> pending;
   private final Counters published;
@@ -44,29 +43,18 @@ class VertxEventBusMetrics implements EventBusMetrics<VertxEventBusMetrics.Handl
   private final Summaries bytesWritten;
 
   VertxEventBusMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
-    this.labelMatchers = labelMatchers;
-    handlers = Gauges.longGauges(MetricsCategory.EVENT_BUS, "vertx.eventbus.handlers", "Number of event bus handlers in use",
-      registry, Labels.ADDRESS);
-    pending = Gauges.longGauges(MetricsCategory.EVENT_BUS, "vertx.eventbus.pending", "Number of messages not processed yet",
-      registry, Labels.ADDRESS, Labels.SIDE);
-    published = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.published", "Number of messages published (publish / subscribe)",
-      registry, Labels.ADDRESS, Labels.SIDE);
-    sent = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.sent", "Number of messages sent (point-to-point)",
-      registry, Labels.ADDRESS, Labels.SIDE);
-    received = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.received", "Number of messages received",
-      registry, Labels.ADDRESS, Labels.SIDE);
-    delivered = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.delivered", "Number of messages delivered to handlers",
-      registry, Labels.ADDRESS, Labels.SIDE);
-    errorCount = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.errors", "Number of errors",
-      registry, Labels.ADDRESS, Labels.CLASS);
-    replyFailures = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.replyFailures", "Number of message reply failures",
-      registry, Labels.ADDRESS, "failure");
-    processTime = new Timers(MetricsCategory.EVENT_BUS, "vertx.eventbus.processingTime", "Processing time",
-      registry, Labels.ADDRESS);
-    bytesRead = new Summaries(MetricsCategory.EVENT_BUS, "vertx.eventbus.bytesRead", "Number of bytes received while reading messages from event bus cluster peers",
-      registry, Labels.ADDRESS);
-    bytesWritten = new Summaries(MetricsCategory.EVENT_BUS, "vertx.eventbus.bytesWritten", "Number of bytes sent while sending messages to event bus cluster peers",
-      registry, Labels.ADDRESS);
+    super(labelMatchers, registry, MetricsCategory.EVENT_BUS, "vertx.eventbus.");
+    handlers = longGauges("handlers", "Number of event bus handlers in use", Labels.ADDRESS);
+    pending = longGauges("pending", "Number of messages not processed yet", Labels.ADDRESS, Labels.SIDE);
+    published = counters("published", "Number of messages published (publish / subscribe)", Labels.ADDRESS, Labels.SIDE);
+    sent = counters("sent", "Number of messages sent (point-to-point)", Labels.ADDRESS, Labels.SIDE);
+    received = counters("received", "Number of messages received", Labels.ADDRESS, Labels.SIDE);
+    delivered = counters("delivered", "Number of messages delivered to handlers", Labels.ADDRESS, Labels.SIDE);
+    errorCount = counters("errors", "Number of errors", Labels.ADDRESS, Labels.CLASS);
+    replyFailures = counters("replyFailures", "Number of message reply failures", Labels.ADDRESS, "failure");
+    processTime = timers("processingTime", "Processing time", Labels.ADDRESS);
+    bytesRead = summaries("bytesRead", "Number of bytes received while reading messages from event bus cluster peers", Labels.ADDRESS);
+    bytesWritten = summaries("bytesWritten", "Number of bytes sent while sending messages to event bus cluster peers", Labels.ADDRESS);
   }
 
   @Override

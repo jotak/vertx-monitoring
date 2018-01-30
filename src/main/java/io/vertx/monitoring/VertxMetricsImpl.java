@@ -18,7 +18,6 @@ package io.vertx.monitoring;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.vertx.core.Verticle;
-import io.vertx.core.Vertx;
 import io.vertx.core.datagram.DatagramSocket;
 import io.vertx.core.datagram.DatagramSocketOptions;
 import io.vertx.core.eventbus.EventBus;
@@ -36,6 +35,7 @@ import io.vertx.core.spi.metrics.HttpClientMetrics;
 import io.vertx.core.spi.metrics.HttpServerMetrics;
 import io.vertx.core.spi.metrics.PoolMetrics;
 import io.vertx.core.spi.metrics.TCPMetrics;
+import io.vertx.core.spi.metrics.VertxMetrics;
 import io.vertx.monitoring.backend.BackendRegistries;
 import io.vertx.monitoring.backend.BackendRegistry;
 import io.vertx.monitoring.match.LabelMatchers;
@@ -49,7 +49,7 @@ import static io.vertx.monitoring.MetricsCategory.*;
  *
  * @author Joel Takvorian
  */
-public class VertxMonitoring extends DummyVertxMetrics {
+public class VertxMetricsImpl extends AbstractMetrics implements VertxMetrics {
   private final BackendRegistry backendRegistry;
   private final String registryName;
   private final Optional<EventBusMetrics> eventBusMetrics;
@@ -64,11 +64,11 @@ public class VertxMonitoring extends DummyVertxMetrics {
   /**
    * @param options Vertx Prometheus options
    */
-  public VertxMonitoring(Vertx vertx, VertxMonitoringOptions options) {
+  public VertxMetricsImpl(VertxMonitoringOptions options, LabelMatchers labelMatchers, BackendRegistry backendRegistry) {
+    super(labelMatchers, backendRegistry.getMeterRegistry(), null, null);
+    this.backendRegistry = backendRegistry;
     registryName = options.getRegistryName();
-    this.backendRegistry = BackendRegistries.setupBackend(vertx, options);
     MeterRegistry registry = backendRegistry.getMeterRegistry();
-    LabelMatchers labelMatchers = new LabelMatchers(options.getLabelMatches());
 
     eventBusMetrics = options.isMetricsCategoryDisabled(EVENT_BUS) ? Optional.empty()
       : Optional.of(new VertxEventBusMetrics(labelMatchers, registry));
@@ -113,47 +113,47 @@ public class VertxMonitoring extends DummyVertxMetrics {
 
   @Override
   public EventBusMetrics createMetrics(EventBus eventBus) {
-    return eventBusMetrics.orElseGet(() -> super.createMetrics(eventBus));
+    return eventBusMetrics.orElse(DummyVertxMetrics.DummyEventBusMetrics.INSTANCE);
   }
 
   @Override
   public HttpServerMetrics<?, ?, ?> createMetrics(HttpServer httpServer, SocketAddress socketAddress, HttpServerOptions httpServerOptions) {
     return httpServerMetrics
       .map(servers -> servers.forAddress(socketAddress))
-      .orElseGet(() -> super.createMetrics(httpServer, socketAddress, httpServerOptions));
+      .orElse(DummyVertxMetrics.DummyHttpServerMetrics.INSTANCE);
   }
 
   @Override
   public HttpClientMetrics<?, ?, ?, ?, ?> createMetrics(HttpClient httpClient, HttpClientOptions httpClientOptions) {
     return httpClientMetrics
       .map(clients -> clients.forAddress(httpClientOptions.getLocalAddress()))
-      .orElseGet(() -> super.createMetrics(httpClient, httpClientOptions));
+      .orElse(DummyVertxMetrics.DummyHttpClientMetrics.INSTANCE);
   }
 
   @Override
   public TCPMetrics<?> createMetrics(SocketAddress socketAddress, NetServerOptions netServerOptions) {
     return netServerMetrics
       .map(servers -> servers.forAddress(socketAddress))
-      .orElseGet(() -> super.createMetrics(socketAddress, netServerOptions));
+      .orElse(DummyVertxMetrics.DummyTCPMetrics.INSTANCE);
   }
 
   @Override
   public TCPMetrics<?> createMetrics(NetClientOptions netClientOptions) {
     return netClientMetrics
       .map(clients -> clients.forAddress(netClientOptions.getLocalAddress()))
-      .orElseGet(() -> super.createMetrics(netClientOptions));
+      .orElse(DummyVertxMetrics.DummyTCPMetrics.INSTANCE);
   }
 
   @Override
   public DatagramSocketMetrics createMetrics(DatagramSocket datagramSocket, DatagramSocketOptions datagramSocketOptions) {
-    return datagramSocketMetrics.orElseGet(() -> super.createMetrics(datagramSocket, datagramSocketOptions));
+    return datagramSocketMetrics.orElse(DummyVertxMetrics.DummyDatagramMetrics.INSTANCE);
   }
 
   @Override
   public <P> PoolMetrics<?> createMetrics(P pool, String poolType, String poolName, int maxPoolSize) {
     return poolMetrics
       .map(pools -> pools.forInstance(poolType, poolName, maxPoolSize))
-      .orElseGet(() -> super.createMetrics(pool, poolType, poolName, maxPoolSize));
+      .orElse(DummyVertxMetrics.DummyWorkerPoolMetrics.INSTANCE);
   }
 
   @Override

@@ -27,8 +27,7 @@ import io.vertx.monitoring.meters.Summaries;
 /**
  * @author Joel Takvorian
  */
-class VertxDatagramSocketMetrics implements DatagramSocketMetrics {
-  private final LabelMatchers labelMatchers;
+class VertxDatagramSocketMetrics extends AbstractMetrics implements DatagramSocketMetrics {
   private final Summaries bytesReceived;
   private final Summaries bytesSent;
   private final Counters errorCount;
@@ -36,13 +35,10 @@ class VertxDatagramSocketMetrics implements DatagramSocketMetrics {
   private volatile String localAddress;
 
   VertxDatagramSocketMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
-    this.labelMatchers = labelMatchers;
-    bytesReceived = new Summaries(MetricsCategory.DATAGRAM_SOCKET, "vertx.datagram.bytesReceived",
-      "Total number of datagram bytes received", registry, Labels.LOCAL);
-    bytesSent = new Summaries(MetricsCategory.DATAGRAM_SOCKET, "vertx.datagram.bytesSent",
-      "Total number of datagram bytes sent", registry);
-    errorCount = new Counters(MetricsCategory.DATAGRAM_SOCKET, "vertx.datagram.errors",
-      "Total number of datagram errors", registry, Labels.CLASS);
+    super(labelMatchers, registry, MetricsCategory.DATAGRAM_SOCKET, "vertx.datagram.");
+    bytesReceived = summaries("bytesReceived", "Total number of datagram bytes received", Labels.LOCAL);
+    bytesSent = summaries("bytesSent", "Total number of datagram bytes sent");
+    errorCount = counters("errors", "Total number of datagram errors", Labels.CLASS);
   }
 
   @Override

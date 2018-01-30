@@ -26,14 +26,12 @@ import java.util.concurrent.atomic.LongAdder;
 /**
  * @author Joel Takvorian
  */
-class VertxVerticleMetrics {
-  private final LabelMatchers labelMatchers;
+class VertxVerticleMetrics extends AbstractMetrics {
   private final Gauges<LongAdder> verticles;
 
   VertxVerticleMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
-    this.labelMatchers = labelMatchers;
-    verticles = Gauges.longGauges(MetricsCategory.VERTICLES, "vertx.verticle", "Number of verticle instances deployed",
-      registry, "name");
+    super(labelMatchers, registry, MetricsCategory.VERTICLES, "vertx.");
+    verticles = longGauges("verticle", "Number of verticle instances deployed", "name");
   }
 
   void verticleDeployed(Verticle verticle) {

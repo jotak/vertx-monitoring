@@ -29,8 +29,7 @@ import java.util.concurrent.atomic.LongAdder;
 /**
  * @author Joel Takvorian
  */
-class VertxPoolMetrics {
-  private final LabelMatchers labelMatchers;
+class VertxPoolMetrics extends AbstractMetrics {
   private final Timers queueDelay;
   private final Gauges<LongAdder> queueSize;
   private final Timers usage;
@@ -39,26 +38,20 @@ class VertxPoolMetrics {
   private final Counters completed;
 
   VertxPoolMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
-    this.labelMatchers = labelMatchers;
-    queueDelay = new Timers(MetricsCategory.NAMED_POOLS, "vertx.pool.queue.delay",
-      "Queue time for a resource", registry, "pool.type", "pool.name");
-    queueSize = Gauges.longGauges(MetricsCategory.NAMED_POOLS, "vertx.pool.queue.size",
-      "Number of elements waiting for a resource", registry, "pool.type", "pool.name");
-    usage = new Timers(MetricsCategory.NAMED_POOLS, "vertx.pool.usage",
-      "Time using a resource", registry, "pool.type", "pool.name");
-    inUse = Gauges.longGauges(MetricsCategory.NAMED_POOLS, "vertx.pool.inUse",
-      "Number of resources used", registry, "pool.type", "pool.name");
-    usageRatio = Gauges.doubleGauges(MetricsCategory.NAMED_POOLS, "vertx.pool.ratio",
-      "Pool usage ratio, only present if maximum pool size could be determined", registry, "pool.type", "pool.name");
-    completed = new Counters(MetricsCategory.NAMED_POOLS, "vertx.pool.completed",
-      "Number of elements done with the resource", registry, "pool.type", "pool.name");
+    super(labelMatchers, registry, MetricsCategory.NAMED_POOLS, "vertx.pool.");
+    queueDelay = timers("queue.delay", "Queue time for a resource", "pool.type", "pool.name");
+    queueSize = longGauges("queue.size", "Number of elements waiting for a resource", "pool.type", "pool.name");
+    usage = timers("usage", "Time using a resource", "pool.type", "pool.name");
+    inUse = longGauges("inUse", "Number of resources used", "pool.type", "pool.name");
+    usageRatio = doubleGauges("ratio", "Pool usage ratio, only present if maximum pool size could be determined", "pool.type", "pool.name");
+    completed = counters("completed", "Number of elements done with the resource", "pool.type", "pool.name");
   }
 
   PoolMetrics forInstance(String poolType, String poolName, int maxPoolSize) {
     return new Instance(poolType, poolName, maxPoolSize);
   }
 
-  class Instance implements PoolMetrics<Timers.EventTiming> {
+  class Instance implements MicrometerMetrics, PoolMetrics<Timers.EventTiming> {
     private final String poolType;
     private final String poolName;
     private final int maxPoolSize;
@@ -114,6 +107,16 @@ class VertxPoolMetrics {
         usageRatio.get(labelMatchers, poolType, poolName)
           .set((double)inUse / maxPoolSize);
       }
+    }
+
+    @Override
+    public MeterRegistry registry() {
+      return registry;
+    }
+
+    @Override
+    public String baseName() {
+      return baseName;
     }
   }
 }

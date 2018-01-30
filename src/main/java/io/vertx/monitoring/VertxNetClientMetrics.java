@@ -30,34 +30,29 @@ import java.util.concurrent.atomic.LongAdder;
 /**
  * @author Joel Takvorian
  */
-class VertxNetClientMetrics {
-  protected final LabelMatchers labelMatchers;
+class VertxNetClientMetrics extends AbstractMetrics {
   private final Gauges<LongAdder> connections;
   private final Summaries bytesReceived;
   private final Summaries bytesSent;
   private final Counters errorCount;
 
   VertxNetClientMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
-    this(labelMatchers, registry, MetricsCategory.NET_CLIENT, "vertx.net");
+    this(labelMatchers, registry, MetricsCategory.NET_CLIENT, "vertx.net.client.");
   }
 
-  VertxNetClientMetrics(LabelMatchers labelMatchers, MeterRegistry registry, MetricsCategory domain, String prefix) {
-    this.labelMatchers = labelMatchers;
-    connections = Gauges.longGauges(domain, prefix + ".client.connections", "Number of connections to the remote host currently opened",
-      registry, Labels.LOCAL, Labels.REMOTE);
-    bytesReceived = new Summaries(domain, prefix + ".client.bytesReceived", "Number of bytes received from the remote host",
-      registry, Labels.LOCAL, Labels.REMOTE);
-    bytesSent = new Summaries(domain, prefix + ".client.bytesSent", "Number of bytes sent to the remote host",
-      registry, Labels.LOCAL, Labels.REMOTE);
-    errorCount = new Counters(domain, prefix + ".client.errors", "Number of errors",
-      registry, Labels.LOCAL, Labels.REMOTE, Labels.CLASS);
+  VertxNetClientMetrics(LabelMatchers labelMatchers, MeterRegistry registry, MetricsCategory domain, String baseName) {
+    super(labelMatchers, registry, domain, baseName);
+    connections = longGauges("connections", "Number of connections to the remote host currently opened", Labels.LOCAL, Labels.REMOTE);
+    bytesReceived = summaries("bytesReceived", "Number of bytes received from the remote host", Labels.LOCAL, Labels.REMOTE);
+    bytesSent = summaries("bytesSent", "Number of bytes sent to the remote host", Labels.LOCAL, Labels.REMOTE);
+    errorCount = counters("errors", "Number of errors", Labels.LOCAL, Labels.REMOTE, Labels.CLASS);
   }
 
   TCPMetrics forAddress(String localAddress) {
     return new Instance(localAddress);
   }
 
-  class Instance implements TCPMetrics<String> {
+  class Instance implements MicrometerMetrics, TCPMetrics<String> {
     protected final String local;
 
     Instance(String localAddress) {
@@ -98,6 +93,16 @@ class VertxNetClientMetrics {
 
     @Override
     public void close() {
+    }
+
+    @Override
+    public MeterRegistry registry() {
+      return registry;
+    }
+
+    @Override
+    public String baseName() {
+      return baseName;
     }
   }
 }

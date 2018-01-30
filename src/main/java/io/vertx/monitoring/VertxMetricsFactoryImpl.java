@@ -20,6 +20,9 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.metrics.MetricsOptions;
 import io.vertx.core.spi.VertxMetricsFactory;
 import io.vertx.core.spi.metrics.VertxMetrics;
+import io.vertx.monitoring.backend.BackendRegistries;
+import io.vertx.monitoring.backend.BackendRegistry;
+import io.vertx.monitoring.match.LabelMatchers;
 
 /**
  * @author Joel Takvorian
@@ -28,11 +31,15 @@ public class VertxMetricsFactoryImpl implements VertxMetricsFactory {
   @Override
   public VertxMetrics metrics(Vertx vertx, VertxOptions vertxOptions) {
     MetricsOptions metricsOptions = vertxOptions.getMetricsOptions();
+    VertxMonitoringOptions options;
     if (metricsOptions instanceof VertxMonitoringOptions) {
-      return new VertxMonitoring(vertx, (VertxMonitoringOptions) metricsOptions);
+      options = (VertxMonitoringOptions) metricsOptions;
     } else {
-      return new VertxMonitoring(vertx, new VertxMonitoringOptions(metricsOptions.toJson()));
+      options = new VertxMonitoringOptions(metricsOptions.toJson());
     }
+    LabelMatchers labelMatchers = new LabelMatchers(options.getLabelMatches());
+    BackendRegistry backendRegistry = BackendRegistries.setupBackend(vertx, options);
+    return new VertxMetricsImpl(options, labelMatchers, backendRegistry);
   }
 
   @Override

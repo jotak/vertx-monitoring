@@ -40,17 +40,12 @@ class VertxHttpClientMetrics extends VertxNetClientMetrics {
   private final Gauges<LongAdder> wsConnections;
 
   VertxHttpClientMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
-    super(labelMatchers, registry, MetricsCategory.HTTP_CLIENT, "vertx.http");
-    requests = Gauges.longGauges(MetricsCategory.HTTP_CLIENT, "vertx.http.client.requests",
-      "Number of requests waiting for a response", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
-    requestCount = new Counters(MetricsCategory.HTTP_CLIENT, "vertx.http.client.requestCount",
-      "Number of requests sent", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH, Labels.METHOD);
-    responseTime = new Timers(MetricsCategory.HTTP_CLIENT, "vertx.http.client.responseTime",
-      "Response time", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
-    responseCount = new Counters(MetricsCategory.HTTP_CLIENT, "vertx.http.client.responseCount",
-      "Response count with codes", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH, Labels.CODE);
-    wsConnections = Gauges.longGauges(MetricsCategory.HTTP_CLIENT, "vertx.http.client.wsConnections",
-      "Number of websockets currently opened", registry, Labels.LOCAL, Labels.REMOTE);
+    super(labelMatchers, registry, MetricsCategory.HTTP_CLIENT, "vertx.http.client.");
+    requests = longGauges("requests", "Number of requests waiting for a response", Labels.LOCAL, Labels.REMOTE, Labels.PATH);
+    requestCount = counters("requestCount", "Number of requests sent", Labels.LOCAL, Labels.REMOTE, Labels.PATH, Labels.METHOD);
+    responseTime = timers("responseTime", "Response time", Labels.LOCAL, Labels.REMOTE, Labels.PATH);
+    responseCount = counters("responseCount", "Response count with codes", Labels.LOCAL, Labels.REMOTE, Labels.PATH, Labels.CODE);
+    wsConnections = longGauges("wsConnections", "Number of websockets currently opened", Labels.LOCAL, Labels.REMOTE);
   }
 
   @Override

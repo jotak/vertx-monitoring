@@ -75,14 +75,4 @@ public class Gauges<T> {
       return t;
     });
   }
-
-  public static Gauges<LongAdder> longGauges(MetricsCategory domain, String name, String description,
-                                             MeterRegistry registry, String... keys) {
-    return new Gauges<>(domain, name, description, LongAdder::new, LongAdder::doubleValue, registry, keys);
-  }
-
-  public static Gauges<AtomicReference<Double>> doubleGauges(MetricsCategory domain, String name, String description,
-                                                             MeterRegistry registry, String... keys) {
-    return new Gauges<>(domain, name, description, () -> new AtomicReference<>(0d), AtomicReference::get, registry, keys);
-  }
 }
