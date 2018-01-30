@@ -16,7 +16,7 @@ import io.vertx.monitoring.match.Match
  * @param disabledMetricsCategories  Sets metrics types that are disabled.
  * @param enabled  Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
  * @param influxDbOptions  Set InfluxDB options. Setting either InfluxDB or Prometheus options is mandatory in order to effectively report metrics.
- * @param labelMatchs  Add a monitored label.
+ * @param labelMatchs  Add a rule for label matching.
  * @param prometheusOptions  Set Prometheus options. Setting either InfluxDB or Prometheus options is mandatory in order to effectively report metrics.
  * @param registryName  Set a name for the metrics registry, so that a new registry will be created and associated with this name. If <code>registryName</code> is not provided (or null), a default registry will be used. If the same name is given to several Vert.x instances (within the same JVM), they will share the same registry.
  *

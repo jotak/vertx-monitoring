@@ -131,7 +131,7 @@ Set InfluxDB options.
 +++
 |[[labelMatchs]]`labelMatchs`|`Array of link:dataobjects.html#Match[Match]`|
 +++
-Add a monitored label.
+Add a rule for label matching.
 +++
 |[[prometheusOptions]]`prometheusOptions`|`link:dataobjects.html#VertxPrometheusOptions[VertxPrometheusOptions]`|
 +++

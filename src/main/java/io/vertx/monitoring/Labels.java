@@ -26,6 +26,7 @@ import java.util.Arrays;
 public final class Labels {
   public static final String LOCAL = "local";
   public static final String REMOTE = "remote";
+  public static final String PATH = "path";
   public static final String CLASS = "class";
   public static final String ADDRESS = "address";
   public static final String SIDE = "side";

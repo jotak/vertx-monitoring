@@ -95,13 +95,13 @@ public class VertxHttpClientServerMetricsTest {
         dp("vertx.http.client.bytesReceived[local=?,remote=127.0.0.1:9195]$Total", concurrentClients * HTTP_SENT_COUNT * SERVER_RESPONSE.getBytes().length),
         dp("vertx.http.client.bytesSent[local=?,remote=127.0.0.1:9195]$Count", concurrentClients * HTTP_SENT_COUNT),
         dp("vertx.http.client.bytesSent[local=?,remote=127.0.0.1:9195]$Total", concurrentClients * HTTP_SENT_COUNT * CLIENT_REQUEST.getBytes().length),
-        dp("vertx.http.client.requestCount[local=?,method=POST,remote=127.0.0.1:9195]$Count", concurrentClients * HTTP_SENT_COUNT));
+        dp("vertx.http.client.requestCount[local=?,method=POST,path=/resource,remote=127.0.0.1:9195]$Count", concurrentClients * HTTP_SENT_COUNT));
 
     List<RegistryInspector.Datapoint> timersDp = RegistryInspector.listTimers("vertx.http.client.", registryName);
     assertThat(timersDp).extracting(RegistryInspector.Datapoint::id).containsOnly(
-      "vertx.http.client.responseTime[local=?,remote=127.0.0.1:9195]$TotalTime",
-      "vertx.http.client.responseTime[local=?,remote=127.0.0.1:9195]$Count",
-      "vertx.http.client.responseTime[local=?,remote=127.0.0.1:9195]$Max");
+      "vertx.http.client.responseTime[local=?,path=/resource,remote=127.0.0.1:9195]$TotalTime",
+      "vertx.http.client.responseTime[local=?,path=/resource,remote=127.0.0.1:9195]$Count",
+      "vertx.http.client.responseTime[local=?,path=/resource,remote=127.0.0.1:9195]$Max");
   }
 
   @Test
@@ -109,8 +109,8 @@ public class VertxHttpClientServerMetricsTest {
     runClientRequests(ctx, true);
     List<RegistryInspector.Datapoint> datapoints = RegistryInspector.listWithoutTimers("vertx.http.server.", registryName);
     assertThat(datapoints).extracting(RegistryInspector.Datapoint::id).containsOnly(
-      "vertx.http.server.requestCount[code=200,local=127.0.0.1:9195,method=POST,remote=_]$Count",
-      "vertx.http.server.requests[local=127.0.0.1:9195,remote=_]$Value",
+      "vertx.http.server.requestCount[code=200,local=127.0.0.1:9195,method=POST,path=/resource,remote=_]$Count",
+      "vertx.http.server.requests[local=127.0.0.1:9195,path=/resource,remote=_]$Value",
       "vertx.http.server.connections[local=127.0.0.1:9195,remote=_]$Value",
       "vertx.http.server.wsConnections[local=127.0.0.1:9195,remote=_]$Value",
       "vertx.http.server.bytesReceived[local=127.0.0.1:9195,remote=_]$Count",
@@ -122,14 +122,14 @@ public class VertxHttpClientServerMetricsTest {
       dp("vertx.http.server.bytesReceived[local=127.0.0.1:9195,remote=_]$Total", concurrentClients * SENT_COUNT * CLIENT_REQUEST.getBytes().length),
       dp("vertx.http.server.bytesSent[local=127.0.0.1:9195,remote=_]$Count", concurrentClients * SENT_COUNT),
       dp("vertx.http.server.bytesSent[local=127.0.0.1:9195,remote=_]$Total", concurrentClients * SENT_COUNT * SERVER_RESPONSE.getBytes().length),
-      dp("vertx.http.server.requestCount[code=200,local=127.0.0.1:9195,method=POST,remote=_]$Count", concurrentClients * HTTP_SENT_COUNT));
+      dp("vertx.http.server.requestCount[code=200,local=127.0.0.1:9195,method=POST,path=/resource,remote=_]$Count", concurrentClients * HTTP_SENT_COUNT));
 
     List<RegistryInspector.Datapoint> timersDp = RegistryInspector.listTimers("vertx.http.server.", registryName)
       .stream().filter(dp -> dp.id().startsWith("vertx.http.server.")).collect(Collectors.toList());
     assertThat(timersDp).extracting(RegistryInspector.Datapoint::id).containsOnly(
-      "vertx.http.server.responseTime[local=127.0.0.1:9195,remote=_]$TotalTime",
-      "vertx.http.server.responseTime[local=127.0.0.1:9195,remote=_]$Count",
-      "vertx.http.server.responseTime[local=127.0.0.1:9195,remote=_]$Max");
+      "vertx.http.server.responseTime[local=127.0.0.1:9195,path=/resource,remote=_]$TotalTime",
+      "vertx.http.server.responseTime[local=127.0.0.1:9195,path=/resource,remote=_]$Count",
+      "vertx.http.server.responseTime[local=127.0.0.1:9195,path=/resource,remote=_]$Max");
   }
 
   private void runClientRequests(TestContext ctx, boolean ws) throws InterruptedException {
@@ -151,7 +151,7 @@ public class VertxHttpClientServerMetricsTest {
   private void httpRequest(HttpClient httpClient, TestContext ctx) {
     Async async = ctx.async(HTTP_SENT_COUNT);
     for (int i = 0; i < HTTP_SENT_COUNT; i++) {
-      httpClient.post(9195, "127.0.0.1", "", response -> {
+      httpClient.post(9195, "127.0.0.1", "/resource", response -> {
         async.countDown();
         if (response.statusCode() != 200) {
           ctx.fail(response.statusMessage());

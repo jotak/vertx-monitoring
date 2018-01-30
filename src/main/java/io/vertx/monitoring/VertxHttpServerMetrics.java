@@ -42,13 +42,13 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
   VertxHttpServerMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
     super(labelMatchers, registry, MetricsCategory.HTTP_SERVER, "vertx.http");
     requests = Gauges.longGauges(MetricsCategory.HTTP_SERVER, "vertx.http.server.requests",
-      "Number of requests being processed", registry, Labels.LOCAL, Labels.REMOTE);
+      "Number of requests being processed", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
     requestCount = new Counters(MetricsCategory.HTTP_SERVER, "vertx.http.server.requestCount",
-      "Number of processed requests", registry, Labels.LOCAL, Labels.REMOTE, Labels.METHOD, Labels.CODE);
+      "Number of processed requests", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH, Labels.METHOD, Labels.CODE);
     requestResetCount = new Counters(MetricsCategory.HTTP_SERVER, "vertx.http.server.requestResetCount",
-      "Number of requests reset", registry, Labels.LOCAL, Labels.REMOTE);
+      "Number of requests reset", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
     processingTime = new Timers(MetricsCategory.HTTP_SERVER, "vertx.http.server.responseTime",
-      "Request processing time", registry, Labels.LOCAL, Labels.REMOTE);
+      "Request processing time", registry, Labels.LOCAL, Labels.REMOTE, Labels.PATH);
     wsConnections = Gauges.longGauges(MetricsCategory.HTTP_SERVER, "vertx.http.server.wsConnections",
       "Number of websockets currently opened", registry, Labels.LOCAL, Labels.REMOTE);
   }
@@ -66,30 +66,30 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
 
     @Override
     public Handler requestBegin(String remote, HttpServerRequest request) {
-      Handler handler = new Handler(remote, request.method().name());
-      requests.get(labelMatchers, local, remote).increment();
-      handler.timer = processingTime.start(labelMatchers, local, remote);
+      Handler handler = new Handler(remote, request.path(), request.method().name());
+      requests.get(labelMatchers, local, remote, handler.path).increment();
+      handler.timer = processingTime.start(labelMatchers, local, remote, handler.path);
       return handler;
     }
 
     @Override
     public void requestReset(Handler handler) {
-      requestResetCount.get(labelMatchers, local, handler.address).increment();
-      requests.get(labelMatchers, local, handler.address).decrement();
+      requestResetCount.get(labelMatchers, local, handler.address, handler.path).increment();
+      requests.get(labelMatchers, local, handler.address, handler.path).decrement();
     }
 
     @Override
     public Handler responsePushed(String remote, HttpMethod method, String uri, HttpServerResponse response) {
-      Handler handler = new Handler(remote, method.name());
-      requests.get(labelMatchers, local, remote).increment();
+      Handler handler = new Handler(remote, uri, method.name());
+      requests.get(labelMatchers, local, remote, handler.path).increment();
       return handler;
     }
 
     @Override
     public void responseEnd(Handler handler, HttpServerResponse response) {
       handler.timer.end();
-      requestCount.get(labelMatchers, local, handler.address, handler.method, String.valueOf(response.getStatusCode())).increment();
-      requests.get(labelMatchers, local, handler.address).decrement();
+      requestCount.get(labelMatchers, local, handler.address, handler.path, handler.method, String.valueOf(response.getStatusCode())).increment();
+      requests.get(labelMatchers, local, handler.address, handler.path).decrement();
     }
 
     @Override
@@ -120,11 +120,13 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
 
   public static class Handler {
     private final String address;
+    private final String path;
     private final String method;
     private Timers.EventTiming timer;
 
-    Handler(String address, String method) {
+    Handler(String address, String path, String method) {
       this.address = address;
+      this.path = path;
       this.method = method;
     }
   }
