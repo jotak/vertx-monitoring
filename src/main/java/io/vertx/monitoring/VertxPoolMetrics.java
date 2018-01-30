@@ -18,6 +18,7 @@ package io.vertx.monitoring;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.vertx.core.spi.metrics.PoolMetrics;
+import io.vertx.monitoring.match.LabelMatchers;
 import io.vertx.monitoring.meters.Counters;
 import io.vertx.monitoring.meters.Gauges;
 import io.vertx.monitoring.meters.Timers;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.LongAdder;
  * @author Joel Takvorian
  */
 class VertxPoolMetrics {
+  private final LabelMatchers labelMatchers;
   private final Timers queueDelay;
   private final Gauges<LongAdder> queueSize;
   private final Timers usage;
@@ -36,19 +38,20 @@ class VertxPoolMetrics {
   private final Gauges<AtomicReference<Double>> usageRatio;
   private final Counters completed;
 
-  VertxPoolMetrics(MeterRegistry registry) {
-    queueDelay = new Timers("vertx.pool.queue.delay", "Queue time for a resource",
-      registry, "pool.type", "pool.name");
-    queueSize = Gauges.longGauges("vertx.pool.queue.size", "Number of elements waiting for a resource",
-      registry, "pool.type", "pool.name");
-    usage = new Timers("vertx.pool.usage", "Time using a resource",
-      registry, "pool.type", "pool.name");
-    inUse = Gauges.longGauges("vertx.pool.inUse", "Number of resources used",
-      registry, "pool.type", "pool.name");
-    usageRatio = Gauges.doubleGauges("vertx.pool.ratio", "Pool usage ratio, only present if maximum pool size could be determined",
-      registry, "pool.type", "pool.name");
-    completed = new Counters("vertx.pool.completed", "Number of elements done with the resource",
-      registry, "pool.type", "pool.name");
+  VertxPoolMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
+    this.labelMatchers = labelMatchers;
+    queueDelay = new Timers(MetricsCategory.NAMED_POOLS, "vertx.pool.queue.delay",
+      "Queue time for a resource", registry, "pool.type", "pool.name");
+    queueSize = Gauges.longGauges(MetricsCategory.NAMED_POOLS, "vertx.pool.queue.size",
+      "Number of elements waiting for a resource", registry, "pool.type", "pool.name");
+    usage = new Timers(MetricsCategory.NAMED_POOLS, "vertx.pool.usage",
+      "Time using a resource", registry, "pool.type", "pool.name");
+    inUse = Gauges.longGauges(MetricsCategory.NAMED_POOLS, "vertx.pool.inUse",
+      "Number of resources used", registry, "pool.type", "pool.name");
+    usageRatio = Gauges.doubleGauges(MetricsCategory.NAMED_POOLS, "vertx.pool.ratio",
+      "Pool usage ratio, only present if maximum pool size could be determined", registry, "pool.type", "pool.name");
+    completed = new Counters(MetricsCategory.NAMED_POOLS, "vertx.pool.completed",
+      "Number of elements done with the resource", registry, "pool.type", "pool.name");
   }
 
   PoolMetrics forInstance(String poolType, String poolName, int maxPoolSize) {
@@ -68,33 +71,33 @@ class VertxPoolMetrics {
 
     @Override
     public Timers.EventTiming submitted() {
-      queueSize.get(poolType, poolName).increment();
-      return queueDelay.start(poolType, poolName);
+      queueSize.get(labelMatchers, poolType, poolName).increment();
+      return queueDelay.start(labelMatchers, poolType, poolName);
     }
 
     @Override
     public void rejected(Timers.EventTiming submitted) {
-      queueSize.get(poolType, poolName).decrement();
+      queueSize.get(labelMatchers, poolType, poolName).decrement();
       submitted.end();
     }
 
     @Override
     public Timers.EventTiming begin(Timers.EventTiming submitted) {
-      queueSize.get(poolType, poolName).decrement();
+      queueSize.get(labelMatchers, poolType, poolName).decrement();
       submitted.end();
-      LongAdder l = inUse.get(poolType, poolName);
+      LongAdder l = inUse.get(labelMatchers, poolType, poolName);
       l.increment();
       checkRatio(l.longValue());
-      return usage.start(poolType, poolName);
+      return usage.start(labelMatchers, poolType, poolName);
     }
 
     @Override
     public void end(Timers.EventTiming begin, boolean succeeded) {
-      LongAdder l = inUse.get(poolType, poolName);
+      LongAdder l = inUse.get(labelMatchers, poolType, poolName);
       l.decrement();
       checkRatio(l.longValue());
       begin.end();
-      completed.get(poolType, poolName).increment();
+      completed.get(labelMatchers, poolType, poolName).increment();
     }
 
     @Override
@@ -108,7 +111,7 @@ class VertxPoolMetrics {
 
     private void checkRatio(long inUse) {
       if (maxPoolSize > 0) {
-        usageRatio.get(poolType, poolName)
+        usageRatio.get(labelMatchers, poolType, poolName)
           .set((double)inUse / maxPoolSize);
       }
     }

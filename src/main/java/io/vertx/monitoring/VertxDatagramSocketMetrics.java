@@ -20,6 +20,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.core.net.impl.SocketAddressImpl;
 import io.vertx.core.spi.metrics.DatagramSocketMetrics;
+import io.vertx.monitoring.match.LabelMatchers;
 import io.vertx.monitoring.meters.Counters;
 import io.vertx.monitoring.meters.Summaries;
 
@@ -27,20 +28,21 @@ import io.vertx.monitoring.meters.Summaries;
  * @author Joel Takvorian
  */
 class VertxDatagramSocketMetrics implements DatagramSocketMetrics {
-
+  private final LabelMatchers labelMatchers;
   private final Summaries bytesReceived;
   private final Summaries bytesSent;
   private final Counters errorCount;
 
   private volatile String localAddress;
 
-  VertxDatagramSocketMetrics(MeterRegistry registry) {
-    bytesReceived = new Summaries("vertx.datagram.bytesReceived", "Total number of datagram bytes received",
-      registry, Labels.LOCAL);
-    bytesSent = new Summaries("vertx.datagram.bytesSent", "Total number of datagram bytes sent",
-      registry);
-    errorCount = new Counters("vertx.datagram.errors", "Total number of datagram errors",
-      registry, Labels.CLASS);
+  VertxDatagramSocketMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
+    this.labelMatchers = labelMatchers;
+    bytesReceived = new Summaries(MetricsCategory.DATAGRAM_SOCKET, "vertx.datagram.bytesReceived",
+      "Total number of datagram bytes received", registry, Labels.LOCAL);
+    bytesSent = new Summaries(MetricsCategory.DATAGRAM_SOCKET, "vertx.datagram.bytesSent",
+      "Total number of datagram bytes sent", registry);
+    errorCount = new Counters(MetricsCategory.DATAGRAM_SOCKET, "vertx.datagram.errors",
+      "Total number of datagram errors", registry, Labels.CLASS);
   }
 
   @Override
@@ -51,18 +53,18 @@ class VertxDatagramSocketMetrics implements DatagramSocketMetrics {
   @Override
   public void bytesRead(Void socketMetric, SocketAddress remoteAddress, long numberOfBytes) {
     if (localAddress != null) {
-      bytesReceived.get(localAddress).record(numberOfBytes);
+      bytesReceived.get(labelMatchers, localAddress).record(numberOfBytes);
     }
   }
 
   @Override
   public void bytesWritten(Void socketMetric, SocketAddress remoteAddress, long numberOfBytes) {
-    bytesSent.get().record(numberOfBytes);
+    bytesSent.get(labelMatchers).record(numberOfBytes);
   }
 
   @Override
   public void exceptionOccurred(Void socketMetric, SocketAddress remoteAddress, Throwable t) {
-    errorCount.get(t.getClass().getSimpleName()).increment();
+    errorCount.get(labelMatchers, t.getClass().getSimpleName()).increment();
   }
 
   @Override

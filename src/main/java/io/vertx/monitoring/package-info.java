@@ -298,8 +298,6 @@
  *
  * === Net Server
  *
- * Note: all metrics here may receive a "remote" label, but it is deactivated by default. See {@link io.vertx.monitoring.VertxMonitoringOptions#setEnableRemoteLabelForServers(boolean)}
- *
  * [cols="15,50,35", options="header"]
  * |===
  * |Metric type
@@ -325,8 +323,6 @@
  * |===
  *
  * === HTTP Server
- *
- * Note: all metrics here may receive a "remote" label, but it is deactivated by default. See {@link io.vertx.monitoring.VertxMonitoringOptions#setEnableRemoteLabelForServers(boolean)}
  *
  * [cols="15,50,35", options="header"]
  * |===

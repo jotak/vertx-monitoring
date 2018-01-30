@@ -22,6 +22,7 @@ import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.core.spi.metrics.HttpClientMetrics;
+import io.vertx.monitoring.match.LabelMatchers;
 import io.vertx.monitoring.meters.Counters;
 import io.vertx.monitoring.meters.Gauges;
 import io.vertx.monitoring.meters.Timers;
@@ -38,31 +39,18 @@ class VertxHttpClientMetrics extends VertxNetClientMetrics {
   private final Counters responseCount;
   private final Gauges<LongAdder> wsConnections;
 
-  VertxHttpClientMetrics(VertxMonitoringOptions options, MeterRegistry registry) {
-    super(options, registry, "vertx.http");
-    if (hasRemoteLabel) {
-      requests = Gauges.longGauges("vertx.http.client.requests", "Number of requests waiting for a response",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      requestCount = new Counters("vertx.http.client.requestCount", "Number of requests sent",
-        registry, Labels.LOCAL, Labels.REMOTE, Labels.METHOD);
-      responseTime = new Timers("vertx.http.client.responseTime", "Response time",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      responseCount = new Counters("vertx.http.client.responseCount", "Response count with codes",
-        registry, Labels.LOCAL, Labels.REMOTE, Labels.CODE);
-      wsConnections = Gauges.longGauges("vertx.http.client.wsConnections", "Number of websockets currently opened",
-        registry, Labels.LOCAL, Labels.REMOTE);
-    } else {
-      requests = Gauges.longGauges("vertx.http.client.requests", "Number of requests waiting for a response",
-        registry, Labels.LOCAL);
-      requestCount = new Counters("vertx.http.client.requestCount", "Number of requests sent",
-        registry, Labels.LOCAL, Labels.METHOD);
-      responseTime = new Timers("vertx.http.client.responseTime", "Response time",
-        registry, Labels.LOCAL);
-      responseCount = new Counters("vertx.http.client.responseCount", "Response count with codes",
-        registry, Labels.LOCAL, Labels.CODE);
-      wsConnections = Gauges.longGauges("vertx.http.client.wsConnections", "Number of websockets currently opened",
-        registry, Labels.LOCAL);
-    }
+  VertxHttpClientMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
+    super(labelMatchers, registry, MetricsCategory.HTTP_CLIENT, "vertx.http");
+    requests = Gauges.longGauges(MetricsCategory.HTTP_CLIENT, "vertx.http.client.requests",
+      "Number of requests waiting for a response", registry, Labels.LOCAL, Labels.REMOTE);
+    requestCount = new Counters(MetricsCategory.HTTP_CLIENT, "vertx.http.client.requestCount",
+      "Number of requests sent", registry, Labels.LOCAL, Labels.REMOTE, Labels.METHOD);
+    responseTime = new Timers(MetricsCategory.HTTP_CLIENT, "vertx.http.client.responseTime",
+      "Response time", registry, Labels.LOCAL, Labels.REMOTE);
+    responseCount = new Counters(MetricsCategory.HTTP_CLIENT, "vertx.http.client.responseCount",
+      "Response count with codes", registry, Labels.LOCAL, Labels.REMOTE, Labels.CODE);
+    wsConnections = Gauges.longGauges(MetricsCategory.HTTP_CLIENT, "vertx.http.client.wsConnections",
+      "Number of websockets currently opened", registry, Labels.LOCAL, Labels.REMOTE);
   }
 
   @Override
@@ -104,15 +92,9 @@ class VertxHttpClientMetrics extends VertxNetClientMetrics {
     @Override
     public Handler requestBegin(Void endpointMetric, String remote, SocketAddress localAddress, SocketAddress remoteAddress, HttpClientRequest request) {
       Handler handler = new Handler(remote);
-      if (hasRemoteLabel) {
-        requests.get(local, remote).increment();
-        requestCount.get(local, remote, request.method().name()).increment();
-        handler.timer = responseTime.start(local, remote);
-      } else {
-        requests.get(local).increment();
-        requestCount.get(local, request.method().name()).increment();
-        handler.timer = responseTime.start(local);
-      }
+      requests.get(labelMatchers, local, remote).increment();
+      requestCount.get(labelMatchers, local, remote, request.method().name()).increment();
+      handler.timer = responseTime.start(labelMatchers, local, remote);
       return handler;
     }
 
@@ -131,42 +113,25 @@ class VertxHttpClientMetrics extends VertxNetClientMetrics {
 
     @Override
     public void requestReset(Handler handler) {
-      if (hasRemoteLabel) {
-        requests.get(local, handler.address).decrement();
-      } else {
-        requests.get(local).decrement();
-      }
+      requests.get(labelMatchers, local, handler.address).decrement();
     }
 
     @Override
     public void responseEnd(Handler handler, HttpClientResponse response) {
-      if (hasRemoteLabel) {
-        requests.get(local, handler.address).decrement();
-        responseCount.get(local, handler.address, String.valueOf(response.statusCode()));
-      } else {
-        requests.get(local).decrement();
-        responseCount.get(local, String.valueOf(response.statusCode()));
-      }
+      requests.get(labelMatchers, local, handler.address).decrement();
+      responseCount.get(labelMatchers, local, handler.address, String.valueOf(response.statusCode()));
       handler.timer.end();
     }
 
     @Override
     public String connected(Void endpointMetric, String remote, WebSocket webSocket) {
-      if (hasRemoteLabel) {
-        wsConnections.get(local, remote).increment();
-      } else {
-        wsConnections.get(local).increment();
-      }
+      wsConnections.get(labelMatchers, local, remote).increment();
       return remote;
     }
 
     @Override
     public void disconnected(String remote) {
-      if (hasRemoteLabel) {
-        wsConnections.get(local, remote).decrement();
-      } else {
-        wsConnections.get(local).decrement();
-      }
+      wsConnections.get(labelMatchers, local, remote).decrement();
     }
 
     @Override

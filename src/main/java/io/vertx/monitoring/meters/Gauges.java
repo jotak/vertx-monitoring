@@ -20,6 +20,8 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.vertx.monitoring.Labels;
+import io.vertx.monitoring.MetricsCategory;
+import io.vertx.monitoring.match.LabelMatchers;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +30,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @author Joel Takvorian
  */
 public class Gauges<T> {
+  private final MetricsCategory domain;
   private final String name;
   private final String description;
   private final String[] keys;
@@ -43,12 +44,14 @@ public class Gauges<T> {
   private final MeterRegistry registry;
   private final Map<Labels.Values, T> gauges = new ConcurrentHashMap<>();
 
-  public Gauges(String name,
+  public Gauges(MetricsCategory domain,
+                String name,
                 String description,
                 Supplier<T> tSupplier,
                 ToDoubleFunction<T> dGetter,
                 MeterRegistry registry,
                 String... keys) {
+    this.domain = domain;
     this.name = name;
     this.description = description;
     this.tSupplier = tSupplier;
@@ -57,26 +60,29 @@ public class Gauges<T> {
     this.keys = keys;
   }
 
-  public T get(String... values) {
+  public T get(LabelMatchers labelMatchers, String... values) {
     return gauges.computeIfAbsent(new Labels.Values(values), v -> {
       // Create a new Gauge for this handler
       T t = tSupplier.get();
-      List<Tag> tags = IntStream.range(0, Math.min(keys.length, values.length))
-        .mapToObj(n -> Tag.of(keys[n], values[n]))
-        .collect(Collectors.toList());
-      Gauge.builder(name, t, dGetter)
-        .description(description)
-        .tags(tags)
-        .register(registry);
+      // Match labels. If match fails, do not store a new gauge
+      List<Tag> tags = labelMatchers.toTags(domain, keys, values);
+      if (tags != null) {
+        Gauge.builder(name, t, dGetter)
+          .description(description)
+          .tags(tags)
+          .register(registry);
+      }
       return t;
     });
   }
 
-  public static Gauges<LongAdder> longGauges(String name, String description, MeterRegistry registry, String... keys) {
-    return new Gauges<>(name, description, LongAdder::new, LongAdder::doubleValue, registry, keys);
+  public static Gauges<LongAdder> longGauges(MetricsCategory domain, String name, String description,
+                                             MeterRegistry registry, String... keys) {
+    return new Gauges<>(domain, name, description, LongAdder::new, LongAdder::doubleValue, registry, keys);
   }
 
-  public static Gauges<AtomicReference<Double>> doubleGauges(String name, String description, MeterRegistry registry, String... keys) {
-    return new Gauges<>(name, description, () -> new AtomicReference<>(0d), AtomicReference::get, registry, keys);
+  public static Gauges<AtomicReference<Double>> doubleGauges(MetricsCategory domain, String name, String description,
+                                                             MeterRegistry registry, String... keys) {
+    return new Gauges<>(domain, name, description, () -> new AtomicReference<>(0d), AtomicReference::get, registry, keys);
   }
 }

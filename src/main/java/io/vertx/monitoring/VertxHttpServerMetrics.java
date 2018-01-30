@@ -22,6 +22,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.core.spi.metrics.HttpServerMetrics;
+import io.vertx.monitoring.match.LabelMatchers;
 import io.vertx.monitoring.meters.Counters;
 import io.vertx.monitoring.meters.Gauges;
 import io.vertx.monitoring.meters.Timers;
@@ -38,31 +39,18 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
   private final Timers processingTime;
   private final Gauges<LongAdder> wsConnections;
 
-  VertxHttpServerMetrics(VertxMonitoringOptions options, MeterRegistry registry) {
-    super(options, registry, "vertx.http");
-    if (hasRemoteLabel) {
-      requests = Gauges.longGauges("vertx.http.server.requests", "Number of requests being processed",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      requestCount = new Counters("vertx.http.server.requestCount", "Number of processed requests",
-        registry, Labels.LOCAL, Labels.REMOTE, Labels.METHOD, Labels.CODE);
-      requestResetCount = new Counters("vertx.http.server.requestResetCount", "Number of requests reset",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      processingTime = new Timers("vertx.http.server.responseTime", "Request processing time",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      wsConnections = Gauges.longGauges("vertx.http.server.wsConnections", "Number of websockets currently opened",
-        registry, Labels.LOCAL, Labels.REMOTE);
-    } else {
-      requests = Gauges.longGauges("vertx.http.server.requests", "Number of requests being processed",
-        registry, Labels.LOCAL);
-      requestCount = new Counters("vertx.http.server.requestCount", "Number of processed requests",
-        registry, Labels.LOCAL, Labels.METHOD, Labels.CODE);
-      requestResetCount = new Counters("vertx.http.server.requestResetCount", "Number of requests reset",
-        registry, Labels.LOCAL);
-      processingTime = new Timers("vertx.http.server.responseTime", "Request processing time",
-        registry, Labels.LOCAL);
-      wsConnections = Gauges.longGauges("vertx.http.server.wsConnections", "Number of websockets currently opened",
-        registry, Labels.LOCAL);
-    }
+  VertxHttpServerMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
+    super(labelMatchers, registry, MetricsCategory.HTTP_SERVER, "vertx.http");
+    requests = Gauges.longGauges(MetricsCategory.HTTP_SERVER, "vertx.http.server.requests",
+      "Number of requests being processed", registry, Labels.LOCAL, Labels.REMOTE);
+    requestCount = new Counters(MetricsCategory.HTTP_SERVER, "vertx.http.server.requestCount",
+      "Number of processed requests", registry, Labels.LOCAL, Labels.REMOTE, Labels.METHOD, Labels.CODE);
+    requestResetCount = new Counters(MetricsCategory.HTTP_SERVER, "vertx.http.server.requestResetCount",
+      "Number of requests reset", registry, Labels.LOCAL, Labels.REMOTE);
+    processingTime = new Timers(MetricsCategory.HTTP_SERVER, "vertx.http.server.responseTime",
+      "Request processing time", registry, Labels.LOCAL, Labels.REMOTE);
+    wsConnections = Gauges.longGauges(MetricsCategory.HTTP_SERVER, "vertx.http.server.wsConnections",
+      "Number of websockets currently opened", registry, Labels.LOCAL, Labels.REMOTE);
   }
 
   @Override
@@ -79,48 +67,29 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
     @Override
     public Handler requestBegin(String remote, HttpServerRequest request) {
       Handler handler = new Handler(remote, request.method().name());
-      if (hasRemoteLabel) {
-        requests.get(local, remote).increment();
-        handler.timer = processingTime.start(local, remote);
-      } else {
-        requests.get(local).increment();
-        handler.timer = processingTime.start(local);
-      }
+      requests.get(labelMatchers, local, remote).increment();
+      handler.timer = processingTime.start(labelMatchers, local, remote);
       return handler;
     }
 
     @Override
     public void requestReset(Handler handler) {
-      if (hasRemoteLabel) {
-        requestResetCount.get(local, handler.address).increment();
-        requests.get(local, handler.address).decrement();
-      } else {
-        requestResetCount.get(local).increment();
-        requests.get(local).decrement();
-      }
+      requestResetCount.get(labelMatchers, local, handler.address).increment();
+      requests.get(labelMatchers, local, handler.address).decrement();
     }
 
     @Override
     public Handler responsePushed(String remote, HttpMethod method, String uri, HttpServerResponse response) {
       Handler handler = new Handler(remote, method.name());
-      if (hasRemoteLabel) {
-        requests.get(local, remote).increment();
-      } else {
-        requests.get(local).increment();
-      }
+      requests.get(labelMatchers, local, remote).increment();
       return handler;
     }
 
     @Override
     public void responseEnd(Handler handler, HttpServerResponse response) {
       handler.timer.end();
-      if (hasRemoteLabel) {
-        requestCount.get(local, handler.address, handler.method, String.valueOf(response.getStatusCode())).increment();
-        requests.get(local, handler.address).decrement();
-      } else {
-        requestCount.get(local, handler.method, String.valueOf(response.getStatusCode())).increment();
-        requests.get(local).decrement();
-      }
+      requestCount.get(labelMatchers, local, handler.address, handler.method, String.valueOf(response.getStatusCode())).increment();
+      requests.get(labelMatchers, local, handler.address).decrement();
     }
 
     @Override
@@ -130,21 +99,13 @@ class VertxHttpServerMetrics extends VertxNetServerMetrics {
 
     @Override
     public String connected(String remote, ServerWebSocket serverWebSocket) {
-      if (hasRemoteLabel) {
-        wsConnections.get(local, remote).increment();
-      } else {
-        wsConnections.get(local).increment();
-      }
+      wsConnections.get(labelMatchers, local, remote).increment();
       return remote;
     }
 
     @Override
     public void disconnected(String remote) {
-      if (hasRemoteLabel) {
-        wsConnections.get(local, remote).decrement();
-      } else {
-        wsConnections.get(local).decrement();
-      }
+      wsConnections.get(labelMatchers, local, remote).decrement();
     }
 
     @Override

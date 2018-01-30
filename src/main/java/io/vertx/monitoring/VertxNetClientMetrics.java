@@ -20,6 +20,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.core.net.impl.SocketAddressImpl;
 import io.vertx.core.spi.metrics.TCPMetrics;
+import io.vertx.monitoring.match.LabelMatchers;
 import io.vertx.monitoring.meters.Counters;
 import io.vertx.monitoring.meters.Gauges;
 import io.vertx.monitoring.meters.Summaries;
@@ -30,38 +31,26 @@ import java.util.concurrent.atomic.LongAdder;
  * @author Joel Takvorian
  */
 class VertxNetClientMetrics {
+  protected final LabelMatchers labelMatchers;
   private final Gauges<LongAdder> connections;
   private final Summaries bytesReceived;
   private final Summaries bytesSent;
   private final Counters errorCount;
-  final boolean hasRemoteLabel;
 
-  VertxNetClientMetrics(VertxMonitoringOptions options, MeterRegistry registry) {
-    this(options, registry, "vertx.net");
+  VertxNetClientMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
+    this(labelMatchers, registry, MetricsCategory.NET_CLIENT, "vertx.net");
   }
 
-  VertxNetClientMetrics(VertxMonitoringOptions options, MeterRegistry registry, String prefix) {
-    if (options.isEnableRemoteLabelForClients()) {
-      hasRemoteLabel = true;
-      connections = Gauges.longGauges(prefix + ".client.connections", "Number of connections to the remote host currently opened",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      bytesReceived = new Summaries(prefix + ".client.bytesReceived", "Number of bytes received from the remote host",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      bytesSent = new Summaries(prefix + ".client.bytesSent", "Number of bytes sent to the remote host",
-        registry, Labels.LOCAL, Labels.REMOTE);
-      errorCount = new Counters(prefix + ".client.errors", "Number of errors",
-        registry, Labels.LOCAL, Labels.REMOTE, Labels.CLASS);
-    } else {
-      hasRemoteLabel = false;
-      connections = Gauges.longGauges(prefix + ".client.connections", "Number of connections to the remote host currently opened",
-        registry, Labels.LOCAL);
-      bytesReceived = new Summaries(prefix + ".client.bytesReceived", "Number of bytes received from the remote host",
-        registry, Labels.LOCAL);
-      bytesSent = new Summaries(prefix + ".client.bytesSent", "Number of bytes sent to the remote host",
-        registry, Labels.LOCAL);
-      errorCount = new Counters(prefix + ".client.errors", "Number of errors",
-        registry, Labels.LOCAL, Labels.CLASS);
-    }
+  VertxNetClientMetrics(LabelMatchers labelMatchers, MeterRegistry registry, MetricsCategory domain, String prefix) {
+    this.labelMatchers = labelMatchers;
+    connections = Gauges.longGauges(domain, prefix + ".client.connections", "Number of connections to the remote host currently opened",
+      registry, Labels.LOCAL, Labels.REMOTE);
+    bytesReceived = new Summaries(domain, prefix + ".client.bytesReceived", "Number of bytes received from the remote host",
+      registry, Labels.LOCAL, Labels.REMOTE);
+    bytesSent = new Summaries(domain, prefix + ".client.bytesSent", "Number of bytes sent to the remote host",
+      registry, Labels.LOCAL, Labels.REMOTE);
+    errorCount = new Counters(domain, prefix + ".client.errors", "Number of errors",
+      registry, Labels.LOCAL, Labels.REMOTE, Labels.CLASS);
   }
 
   TCPMetrics forAddress(String localAddress) {
@@ -78,48 +67,28 @@ class VertxNetClientMetrics {
     @Override
     public String connected(SocketAddress remoteAddress, String remoteName) {
       String remote = Labels.fromAddress(new SocketAddressImpl(remoteAddress.port(), remoteName));
-      if (hasRemoteLabel) {
-        connections.get(local, remote).increment();
-      } else {
-        connections.get(local).increment();
-      }
+      connections.get(labelMatchers, local, remote).increment();
       return remote;
     }
 
     @Override
     public void disconnected(String remote, SocketAddress remoteAddress) {
-      if (hasRemoteLabel) {
-        connections.get(local, remote).decrement();
-      } else {
-        connections.get(local).decrement();
-      }
+      connections.get(labelMatchers, local, remote).decrement();
     }
 
     @Override
     public void bytesRead(String remote, SocketAddress remoteAddress, long numberOfBytes) {
-      if (hasRemoteLabel) {
-        bytesReceived.get(local, remote).record(numberOfBytes);
-      } else {
-        bytesReceived.get(local).record(numberOfBytes);
-      }
+      bytesReceived.get(labelMatchers, local, remote).record(numberOfBytes);
     }
 
     @Override
     public void bytesWritten(String remote, SocketAddress remoteAddress, long numberOfBytes) {
-      if (hasRemoteLabel) {
-        bytesSent.get(local, remote).record(numberOfBytes);
-      } else {
-        bytesSent.get(local).record(numberOfBytes);
-      }
+      bytesSent.get(labelMatchers, local, remote).record(numberOfBytes);
     }
 
     @Override
     public void exceptionOccurred(String remote, SocketAddress remoteAddress, Throwable t) {
-      if (hasRemoteLabel) {
-        errorCount.get(local, remote, t.getClass().getSimpleName()).increment();
-      } else {
-        errorCount.get(local, t.getClass().getSimpleName()).increment();
-      }
+      errorCount.get(labelMatchers, local, remote, t.getClass().getSimpleName()).increment();
     }
 
     @Override

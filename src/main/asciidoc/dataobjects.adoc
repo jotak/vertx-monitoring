@@ -1,5 +1,40 @@
 = Cheatsheets
 
+[[Match]]
+== Match
+
+++++
+ A match for a value.
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[alias]]`alias`|`String`|
++++
+Set the alias the human readable name that will be used as a part of
+ registry entry name when the value matches.
++++
+|[[domain]]`domain`|`link:enums.html#MetricsCategory[MetricsCategory]`|
++++
+Set the label domain.
++++
+|[[label]]`label`|`String`|
++++
+Set the label to match.
++++
+|[[type]]`type`|`link:enums.html#MatchType[MatchType]`|
++++
+Set the type of matching to apply.
++++
+|[[value]]`value`|`String`|
++++
+Set the matched value.
++++
+|===
+
 [[VertxInfluxDbOptions]]
 == VertxInfluxDbOptions
 
@@ -81,20 +116,6 @@ Username used for authenticated connections
 +++
 Sets metrics types that are disabled.
 +++
-|[[enableRemoteLabelForClients]]`enableRemoteLabelForClients`|`Boolean`|
-+++
-Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
- This is relevant when the application makes client connections to a large number of different clients,
- in order to reduce the number of related metrics created.<br/>
- This option is set to <i>true</i> by default.
-+++
-|[[enableRemoteLabelForServers]]`enableRemoteLabelForServers`|`Boolean`|
-+++
-Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
- This is relevant when the number of clients connecting to the application servers is small and under control,
- in order to reduce the number of related metrics created.<br/>
- This option is set to <i>false</i> by default.
-+++
 |[[enabled]]`enabled`|`Boolean`|
 +++
 Set whether metrics will be enabled on the Vert.x instance. Metrics are not enabled by default.
@@ -103,6 +124,14 @@ Set whether metrics will be enabled on the Vert.x instance. Metrics are not enab
 +++
 Set InfluxDB options.
  Setting either InfluxDB or Prometheus options is mandatory in order to effectively report metrics.
++++
+|[[labelMatches]]`labelMatches`|`Array of link:dataobjects.html#Match[Match]`|
++++
+
++++
+|[[labelMatchs]]`labelMatchs`|`Array of link:dataobjects.html#Match[Match]`|
++++
+Add a monitored label.
 +++
 |[[prometheusOptions]]`prometheusOptions`|`link:dataobjects.html#VertxPrometheusOptions[VertxPrometheusOptions]`|
 +++

@@ -18,6 +18,7 @@ package io.vertx.monitoring;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.vertx.core.Verticle;
+import io.vertx.monitoring.match.LabelMatchers;
 import io.vertx.monitoring.meters.Gauges;
 
 import java.util.concurrent.atomic.LongAdder;
@@ -26,18 +27,20 @@ import java.util.concurrent.atomic.LongAdder;
  * @author Joel Takvorian
  */
 class VertxVerticleMetrics {
+  private final LabelMatchers labelMatchers;
   private final Gauges<LongAdder> verticles;
 
-  VertxVerticleMetrics(MeterRegistry registry) {
-    verticles = Gauges.longGauges("vertx.verticle", "Number of verticle instances deployed",
+  VertxVerticleMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
+    this.labelMatchers = labelMatchers;
+    verticles = Gauges.longGauges(MetricsCategory.VERTICLES, "vertx.verticle", "Number of verticle instances deployed",
       registry, "name");
   }
 
   void verticleDeployed(Verticle verticle) {
-    verticles.get(verticle.getClass().getName()).increment();
+    verticles.get(labelMatchers, verticle.getClass().getName()).increment();
   }
 
   void verticleUndeployed(Verticle verticle) {
-    verticles.get(verticle.getClass().getName()).decrement();
+    verticles.get(labelMatchers, verticle.getClass().getName()).decrement();
   }
 }

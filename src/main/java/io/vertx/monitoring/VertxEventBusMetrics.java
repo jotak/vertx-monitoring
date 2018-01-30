@@ -18,6 +18,7 @@ package io.vertx.monitoring;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.vertx.core.eventbus.ReplyFailure;
 import io.vertx.core.spi.metrics.EventBusMetrics;
+import io.vertx.monitoring.match.LabelMatchers;
 import io.vertx.monitoring.meters.Counters;
 import io.vertx.monitoring.meters.Gauges;
 import io.vertx.monitoring.meters.Summaries;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.LongAdder;
  * @author Joel Takvorian
  */
 class VertxEventBusMetrics implements EventBusMetrics<VertxEventBusMetrics.Handler> {
+  private final LabelMatchers labelMatchers;
   private final Gauges<LongAdder> handlers;
   private final Gauges<LongAdder> pending;
   private final Counters published;
@@ -41,40 +43,41 @@ class VertxEventBusMetrics implements EventBusMetrics<VertxEventBusMetrics.Handl
   private final Summaries bytesRead;
   private final Summaries bytesWritten;
 
-  VertxEventBusMetrics(MeterRegistry registry) {
-    handlers = Gauges.longGauges("vertx.eventbus.handlers", "Number of event bus handlers in use",
+  VertxEventBusMetrics(LabelMatchers labelMatchers, MeterRegistry registry) {
+    this.labelMatchers = labelMatchers;
+    handlers = Gauges.longGauges(MetricsCategory.EVENT_BUS, "vertx.eventbus.handlers", "Number of event bus handlers in use",
       registry, Labels.ADDRESS);
-    pending = Gauges.longGauges("vertx.eventbus.pending", "Number of messages not processed yet",
+    pending = Gauges.longGauges(MetricsCategory.EVENT_BUS, "vertx.eventbus.pending", "Number of messages not processed yet",
       registry, Labels.ADDRESS, Labels.SIDE);
-    published = new Counters("vertx.eventbus.published", "Number of messages published (publish / subscribe)",
+    published = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.published", "Number of messages published (publish / subscribe)",
       registry, Labels.ADDRESS, Labels.SIDE);
-    sent = new Counters("vertx.eventbus.sent", "Number of messages sent (point-to-point)",
+    sent = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.sent", "Number of messages sent (point-to-point)",
       registry, Labels.ADDRESS, Labels.SIDE);
-    received = new Counters("vertx.eventbus.received", "Number of messages received",
+    received = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.received", "Number of messages received",
       registry, Labels.ADDRESS, Labels.SIDE);
-    delivered = new Counters("vertx.eventbus.delivered", "Number of messages delivered to handlers",
+    delivered = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.delivered", "Number of messages delivered to handlers",
       registry, Labels.ADDRESS, Labels.SIDE);
-    errorCount = new Counters("vertx.eventbus.errors", "Number of errors",
+    errorCount = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.errors", "Number of errors",
       registry, Labels.ADDRESS, Labels.CLASS);
-    replyFailures = new Counters("vertx.eventbus.replyFailures", "Number of message reply failures",
+    replyFailures = new Counters(MetricsCategory.EVENT_BUS, "vertx.eventbus.replyFailures", "Number of message reply failures",
       registry, Labels.ADDRESS, "failure");
-    processTime = new Timers("vertx.eventbus.processingTime", "Processing time",
+    processTime = new Timers(MetricsCategory.EVENT_BUS, "vertx.eventbus.processingTime", "Processing time",
       registry, Labels.ADDRESS);
-    bytesRead = new Summaries("vertx.eventbus.bytesRead", "Number of bytes received while reading messages from event bus cluster peers",
+    bytesRead = new Summaries(MetricsCategory.EVENT_BUS, "vertx.eventbus.bytesRead", "Number of bytes received while reading messages from event bus cluster peers",
       registry, Labels.ADDRESS);
-    bytesWritten = new Summaries("vertx.eventbus.bytesWritten", "Number of bytes sent while sending messages to event bus cluster peers",
+    bytesWritten = new Summaries(MetricsCategory.EVENT_BUS, "vertx.eventbus.bytesWritten", "Number of bytes sent while sending messages to event bus cluster peers",
       registry, Labels.ADDRESS);
   }
 
   @Override
   public Handler handlerRegistered(String address, String repliedAddress) {
-    handlers.get(address).increment();
+    handlers.get(labelMatchers, address).increment();
     return new Handler(address);
   }
 
   @Override
   public void handlerUnregistered(Handler handler) {
-    handlers.get(handler.address).decrement();
+    handlers.get(labelMatchers, handler.address).decrement();
   }
 
   @Override
@@ -83,50 +86,50 @@ class VertxEventBusMetrics implements EventBusMetrics<VertxEventBusMetrics.Handl
 
   @Override
   public void beginHandleMessage(Handler handler, boolean local) {
-    pending.get(handler.address, Labels.getSide(local)).decrement();
-    handler.timer = processTime.start(handler.address);
+    pending.get(labelMatchers, handler.address, Labels.getSide(local)).decrement();
+    handler.timer = processTime.start(labelMatchers, handler.address);
   }
 
   @Override
   public void endHandleMessage(Handler handler, Throwable failure) {
     handler.timer.end();
     if (failure != null) {
-      errorCount.get(handler.address, failure.getClass().getSimpleName()).increment();
+      errorCount.get(labelMatchers, handler.address, failure.getClass().getSimpleName()).increment();
     }
   }
 
   @Override
   public void messageSent(String address, boolean publish, boolean local, boolean remote) {
     if (publish) {
-      published.get(address, Labels.getSide(local)).increment();
+      published.get(labelMatchers, address, Labels.getSide(local)).increment();
     } else {
-      sent.get(address, Labels.getSide(local)).increment();
+      sent.get(labelMatchers, address, Labels.getSide(local)).increment();
     }
   }
 
   @Override
   public void messageReceived(String address, boolean publish, boolean local, int handlers) {
     String origin = Labels.getSide(local);
-    pending.get(address, origin).add(handlers);
-    received.get(address, origin).increment();
+    pending.get(labelMatchers, address, origin).add(handlers);
+    received.get(labelMatchers, address, origin).increment();
     if (handlers > 0) {
-      delivered.get(address, origin).increment();
+      delivered.get(labelMatchers, address, origin).increment();
     }
   }
 
   @Override
   public void messageWritten(String address, int numberOfBytes) {
-    bytesWritten.get(address).record(numberOfBytes);
+    bytesWritten.get(labelMatchers, address).record(numberOfBytes);
   }
 
   @Override
   public void messageRead(String address, int numberOfBytes) {
-    bytesRead.get(address).record(numberOfBytes);
+    bytesRead.get(labelMatchers, address).record(numberOfBytes);
   }
 
   @Override
   public void replyFailure(String address, ReplyFailure failure) {
-    replyFailures.get(address, failure.name()).increment();
+    replyFailures.get(labelMatchers, address, failure.name()).increment();
   }
 
   @Override

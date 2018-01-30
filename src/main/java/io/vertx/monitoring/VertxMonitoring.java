@@ -38,6 +38,7 @@ import io.vertx.core.spi.metrics.PoolMetrics;
 import io.vertx.core.spi.metrics.TCPMetrics;
 import io.vertx.monitoring.backend.BackendRegistries;
 import io.vertx.monitoring.backend.BackendRegistry;
+import io.vertx.monitoring.match.LabelMatchers;
 
 import java.util.Optional;
 
@@ -67,23 +68,24 @@ public class VertxMonitoring extends DummyVertxMetrics {
     registryName = options.getRegistryName();
     this.backendRegistry = BackendRegistries.setupBackend(vertx, options);
     MeterRegistry registry = backendRegistry.getMeterRegistry();
+    LabelMatchers labelMatchers = new LabelMatchers(options.getLabelMatches());
 
     eventBusMetrics = options.isMetricsCategoryDisabled(EVENT_BUS) ? Optional.empty()
-      : Optional.of(new VertxEventBusMetrics(registry));
+      : Optional.of(new VertxEventBusMetrics(labelMatchers, registry));
     datagramSocketMetrics = options.isMetricsCategoryDisabled(DATAGRAM_SOCKET) ? Optional.empty()
-      : Optional.of(new VertxDatagramSocketMetrics(registry));
+      : Optional.of(new VertxDatagramSocketMetrics(labelMatchers, registry));
     netClientMetrics = options.isMetricsCategoryDisabled(NET_CLIENT) ? Optional.empty()
-      : Optional.of(new VertxNetClientMetrics(options, registry));
+      : Optional.of(new VertxNetClientMetrics(labelMatchers, registry));
     netServerMetrics = options.isMetricsCategoryDisabled(NET_SERVER) ? Optional.empty()
-      : Optional.of(new VertxNetServerMetrics(options, registry));
+      : Optional.of(new VertxNetServerMetrics(labelMatchers, registry));
     httpClientMetrics = options.isMetricsCategoryDisabled(HTTP_CLIENT) ? Optional.empty()
-      : Optional.of(new VertxHttpClientMetrics(options, registry));
+      : Optional.of(new VertxHttpClientMetrics(labelMatchers, registry));
     httpServerMetrics = options.isMetricsCategoryDisabled(HTTP_SERVER) ? Optional.empty()
-      : Optional.of(new VertxHttpServerMetrics(options, registry));
+      : Optional.of(new VertxHttpServerMetrics(labelMatchers, registry));
     poolMetrics = options.isMetricsCategoryDisabled(NAMED_POOLS) ? Optional.empty()
-      : Optional.of(new VertxPoolMetrics(registry));
+      : Optional.of(new VertxPoolMetrics(labelMatchers, registry));
     verticleMetrics = options.isMetricsCategoryDisabled(VERTICLES) ? Optional.empty()
-      : Optional.of(new VertxVerticleMetrics(registry));
+      : Optional.of(new VertxVerticleMetrics(labelMatchers, registry));
   }
 
   @Override

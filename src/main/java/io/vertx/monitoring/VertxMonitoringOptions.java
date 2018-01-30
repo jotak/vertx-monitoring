@@ -17,12 +17,18 @@ package io.vertx.monitoring;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.metrics.MetricsOptions;
 import io.vertx.monitoring.backend.VertxInfluxDbOptions;
 import io.vertx.monitoring.backend.VertxPrometheusOptions;
+import io.vertx.monitoring.match.Match;
+import io.vertx.monitoring.match.MatchType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,35 +47,47 @@ public class VertxMonitoringOptions extends MetricsOptions {
   public static final String DEFAULT_REGISTRY_NAME = "default";
 
   /**
-   * By default, enables <i>remote</i> label for net/http clients.
+   * Default label match for public http server: exclude remote label
    */
-  public static final boolean DEFAULT_ENABLE_REMOTE_LABEL_FOR_CLIENTS = true;
+  public static final Match DEFAULT_HTTP_SERVER_MATCH = new Match()
+    .setDomain(MetricsCategory.HTTP_SERVER)
+    .setLabel("remote")
+    .setType(MatchType.REGEX)
+    .setValue(".*")
+    .setAlias("_");
 
   /**
-   * By default, disables <i>remote</i> label for net/http servers.
+   * Default label match for public net server: exclude remote label
    */
-  public static final boolean DEFAULT_ENABLE_REMOTE_LABEL_FOR_SERVERS = false;
+  public static final Match DEFAULT_NET_SERVER_MATCH = new Match()
+    .setDomain(MetricsCategory.NET_SERVER)
+    .setLabel("remote")
+    .setType(MatchType.REGEX)
+    .setValue(".*")
+    .setAlias("_");
+
+  /**
+   * The default label matches: empty by default
+   */
+  public static final List<Match> DEFAULT_LABEL_MATCHES = Arrays.asList(DEFAULT_HTTP_SERVER_MATCH, DEFAULT_NET_SERVER_MATCH);
 
   private Set<MetricsCategory> disabledMetricsCategories;
   private String registryName;
-  private boolean enableRemoteLabelForClients;
-  private boolean enableRemoteLabelForServers;
+  private List<Match> labelMatches;
   private VertxInfluxDbOptions influxDbOptions;
   private VertxPrometheusOptions prometheusOptions;
 
   public VertxMonitoringOptions() {
     disabledMetricsCategories = EnumSet.noneOf(MetricsCategory.class);
     registryName = DEFAULT_REGISTRY_NAME;
-    enableRemoteLabelForClients = DEFAULT_ENABLE_REMOTE_LABEL_FOR_CLIENTS;
-    enableRemoteLabelForServers = DEFAULT_ENABLE_REMOTE_LABEL_FOR_SERVERS;
+    labelMatches = new ArrayList<>(DEFAULT_LABEL_MATCHES);
   }
 
   public VertxMonitoringOptions(VertxMonitoringOptions other) {
     super(other);
     disabledMetricsCategories = other.disabledMetricsCategories != null ? EnumSet.copyOf(other.disabledMetricsCategories) : EnumSet.noneOf(MetricsCategory.class);
     registryName = other.registryName;
-    enableRemoteLabelForClients = other.enableRemoteLabelForClients;
-    enableRemoteLabelForServers = other.enableRemoteLabelForServers;
+    labelMatches = new ArrayList<>(other.labelMatches);
     if (other.influxDbOptions != null) {
       influxDbOptions = new VertxInfluxDbOptions(other.influxDbOptions);
     }
@@ -81,6 +99,18 @@ public class VertxMonitoringOptions extends MetricsOptions {
   public VertxMonitoringOptions(JsonObject json) {
     this();
     VertxMonitoringOptionsConverter.fromJson(json, this);
+    labelMatches = loadLabelMatches(json);
+  }
+
+  private List<Match> loadLabelMatches(JsonObject json) {
+    List<Match> list = new ArrayList<>();
+
+    JsonArray monitored = json.getJsonArray("labelMatches", new JsonArray());
+    monitored.forEach(object -> {
+      if (object instanceof JsonObject) list.add(new Match((JsonObject) object));
+    });
+
+    return list;
   }
 
   /**
@@ -146,33 +176,31 @@ public class VertxMonitoringOptions extends MetricsOptions {
     return this;
   }
 
-  public boolean isEnableRemoteLabelForClients() {
-    return enableRemoteLabelForClients;
+  /**
+   * @return the list of label matching rules
+   */
+  public List<Match> getLabelMatches() {
+    return labelMatches;
   }
 
   /**
-   * Set false to prevent generation of a label named "remote" on client-related metrics, used to group data points per remote.
-   * This is relevant when the application makes client connections to a large number of different clients,
-   * in order to reduce the number of related metrics created.<br/>
-   * This option is set to <i>true</i> by default.
+   * Add a rule for label matching.
+   *
+   * @param match the label match
+   * @return a reference to this, so the API can be used fluently
    */
-  public VertxMonitoringOptions setEnableRemoteLabelForClients(boolean enableRemoteLabelForClients) {
-    this.enableRemoteLabelForClients = enableRemoteLabelForClients;
+  public VertxMonitoringOptions addLabelMatch(Match match) {
+    labelMatches.add(match);
     return this;
   }
 
-  public boolean isEnableRemoteLabelForServers() {
-    return enableRemoteLabelForServers;
-  }
-
   /**
-   * Set true to allow generation of a label named "remote" on server-related metrics, used to group data points per remote.
-   * This is relevant when the number of clients connecting to the application servers is small and under control,
-   * in order to reduce the number of related metrics created.<br/>
-   * This option is set to <i>false</i> by default.
+   * Reset the label matching rules, so that there is no default behaviour
+   *
+   * @return a reference to this, so the API can be used fluently
    */
-  public VertxMonitoringOptions setEnableRemoteLabelForServers(boolean enableRemoteLabelForServers) {
-    this.enableRemoteLabelForServers = enableRemoteLabelForServers;
+  public VertxMonitoringOptions resetLabelMatches() {
+    labelMatches.clear();
     return this;
   }
 

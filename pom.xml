@@ -68,13 +68,13 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
       <version>${micrometer.version}</version>
-      <!--<optional>true</optional>-->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-influx</artifactId>
       <version>${micrometer.version}</version>
-      <!--<optional>true</optional>-->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>

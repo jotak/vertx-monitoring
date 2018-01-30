@@ -35,17 +35,19 @@ public class VertxMonitoringOptionsConverter {
       });
       obj.setDisabledMetricsCategories(list);
     }
-    if (json.getValue("enableRemoteLabelForClients") instanceof Boolean) {
-      obj.setEnableRemoteLabelForClients((Boolean)json.getValue("enableRemoteLabelForClients"));
-    }
-    if (json.getValue("enableRemoteLabelForServers") instanceof Boolean) {
-      obj.setEnableRemoteLabelForServers((Boolean)json.getValue("enableRemoteLabelForServers"));
-    }
     if (json.getValue("enabled") instanceof Boolean) {
       obj.setEnabled((Boolean)json.getValue("enabled"));
     }
     if (json.getValue("influxDbOptions") instanceof JsonObject) {
       obj.setInfluxDbOptions(new io.vertx.monitoring.backend.VertxInfluxDbOptions((JsonObject)json.getValue("influxDbOptions")));
+    }
+    if (json.getValue("labelMatches") instanceof JsonArray) {
+    }
+    if (json.getValue("labelMatchs") instanceof JsonArray) {
+      json.getJsonArray("labelMatchs").forEach(item -> {
+        if (item instanceof JsonObject)
+          obj.addLabelMatch(new io.vertx.monitoring.match.Match((JsonObject)item));
+      });
     }
     if (json.getValue("prometheusOptions") instanceof JsonObject) {
       obj.setPrometheusOptions(new io.vertx.monitoring.backend.VertxPrometheusOptions((JsonObject)json.getValue("prometheusOptions")));
@@ -61,8 +63,6 @@ public class VertxMonitoringOptionsConverter {
       obj.getDisabledMetricsCategories().forEach(item -> array.add(item.name()));
       json.put("disabledMetricsCategories", array);
     }
-    json.put("enableRemoteLabelForClients", obj.isEnableRemoteLabelForClients());
-    json.put("enableRemoteLabelForServers", obj.isEnableRemoteLabelForServers());
     json.put("enabled", obj.isEnabled());
     if (obj.getRegistryName() != null) {
       json.put("registryName", obj.getRegistryName());
