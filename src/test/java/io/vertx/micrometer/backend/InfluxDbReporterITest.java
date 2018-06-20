@@ -75,7 +75,7 @@ public class InfluxDbReporterITest {
           }
           try {
             context.verify(v -> assertThat(str)
-              .contains("vertx_http_server_connections,local=localhost:8086,remote=_,metric_type=gauge value=1"));
+              .contains("vertx.http.server.connections,local=localhost:8086,remote=_,metric_type=gauge value=1"));
           } finally {
             req.response().setStatusCode(200).end();
             async.complete();
